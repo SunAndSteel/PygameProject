@@ -9,12 +9,12 @@ height = 600
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Binding of Isaac")
 
+def game():
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
 
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            exit()
 
-
-    pygame.display.update()
+        pygame.display.update()
