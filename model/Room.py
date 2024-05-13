@@ -1,7 +1,9 @@
 import pygame
 class Room:
-    def __init__(self, number):
-        self._number = number
+    def __init__(self, walls, doors):
+        self._walls = walls
+        self._items_of_room = [] 
+        self._doors = doors
         self._tile_size = 32
         self._tile_map = [
             [1, 1, 1, 1, 1],
@@ -11,8 +13,8 @@ class Room:
             [1, 1, 1, 1, 1]
         ]
         self.tile_colors = {
-            0: (0, 0, 0),  # White
-            1: (255, 255, 255) # Black
+            0: (0, 0, 0),
+            1: (255, 255, 255)
         }
 
     def draw(self, screen):
