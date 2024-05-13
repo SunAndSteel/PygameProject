@@ -1,20 +1,36 @@
+"""
+Ce module contient le menu principal du jeu "Binding of Isaac".
+"""
+
+# Importation des modules nécessaires
 import pygame, sys
 from Menu_button import Button
 
+# Initialisation de pygame
 pygame.init()
 
+# Configuration de l'affichage
 SCREEN = pygame.display.set_mode((1280, 720))
 pygame.display.set_caption("Menu")
 
+# Chargement de l'image de fond
 BG = pygame.image.load("assets/Graphics/Background_menu.jpg")
 
+# Définition de la difficulté par défaut
 difficulty = 'NORMAL'
 
-def get_font(size):  # Returns Press-Start-2P in the desired size
+# Fonction pour obtenir la police souhaitée
+def get_font(size):
+    """
+    Cette fonction retourne la police souhaitée.
+    """
     return pygame.font.Font("assets/font/The walking font.ttf", size)
 
-
+# Fonction pour l'écran de jeu
 def play():
+    """
+    Cette fonction gère l'écran de jeu.
+    """
     while True:
         PLAY_MOUSE_POS = pygame.mouse.get_pos()
 
@@ -40,8 +56,11 @@ def play():
 
         pygame.display.update()
 
-
+# Fonction pour l'écran des options
 def options():
+    """
+    Cette fonction gère l'écran des options.
+    """
     global difficulty
     while True:
         OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
@@ -61,14 +80,14 @@ def options():
         OPTIONS_BACK = Button(image=None, pos=(640, 650),
                               text_input="GO BACK", font=get_font(75), base_color="Black", hovering_color="Grey")
 
-        # Update base_color based on selected attribute
+        # Mise à jour de la couleur de base en fonction de l'attribut sélectionné
         OPTIONS_EASY.base_color = "Grey" if OPTIONS_EASY.selected else "Black"
         OPTIONS_NORMAL.base_color = "Grey" if OPTIONS_NORMAL.selected else "Black"
         OPTIONS_HARD.base_color = "Grey" if OPTIONS_HARD.selected else "Black"
 
         mouse_pos = pygame.mouse.get_pos()
         for button in [OPTIONS_BACK, OPTIONS_EASY, OPTIONS_NORMAL, OPTIONS_HARD]:
-            button.changeColor(mouse_pos)  # Changer la couleur du bouton si la souris est dessus
+            button.changeColor(mouse_pos)
             button.update(SCREEN)
 
         for event in pygame.event.get():
@@ -95,7 +114,12 @@ def options():
                     OPTIONS_HARD.selected = True
 
         pygame.display.update()
+
+# Fonction pour le menu principal
 def main_menu():
+    """
+    Cette fonction gère le menu principal.
+    """
     while True:
         SCREEN.blit(BG, (0, 0))
 
@@ -132,5 +156,5 @@ def main_menu():
 
         pygame.display.update()
 
-
+# Appel de la fonction du menu principal
 main_menu()
