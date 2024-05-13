@@ -1,69 +1,55 @@
 """
-Ce module contient le menu principal du jeu. Il comprend des options pour jouer au jeu, changer de difficulté et quitter le jeu.
+Ce module contient le menu principal du jeu "Binding of Isaac".
 """
+
+# Importation des modules nécessaires
 import pygame, sys
 from Menu_button import Button
+from main import game
 import random
-from main import *
 
-# Initialiser pygame
+# Initialisation de pygame
 pygame.init()
 
-# Load les musiques
-music_files = ["assets/Sound/Menu song.mp3","assets/Sound/Menu song.mp3","assets/Sound/Menu song.mp3","assets/Sound/Menu song 2.mp3"]
-music = random.choice(music_files)
-pygame.mixer.music.load(music)
-pygame.mixer.music.set_volume(0.4)
-pygame.mixer.music.play(-1)
+width, height = 1280, 720
 
-# Set up the display
-SCREEN = pygame.display.set_mode((1280, 720))
+# Configuration de l'affichage
+SCREEN = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Menu")
+surface = pygame.Surface((width, height), pygame.SRCALPHA)
 
-# Load le background
+# Chargement de l'image de fond
 BG = pygame.image.load("assets/Graphics/Background_menu.jpg")
 
-# Mettre la difficulté
+music_files = ["assets/sound/Menu music.mp3","assets/sound/Menu music.mp3","assets/sound/Menu music.mp3", "assets/sound/Menu music 1.mp3"]
+music = random.choice(music_files)
+pygame.mixer.music.load(music)
+pygame.mixer.music.set_volume(0.5)
+pygame.mixer.music.play(-1)
+
+
+# Définition de la difficulté par défaut
 difficulty = 'NORMAL'
 
-# Fonction pour avoir le font
-def get_font(size):  # Returns Press-Start-2P in the desired size
+# Fonction pour obtenir la police souhaitée
+def get_font(size):
+    """
+    Cette fonction retourne la police souhaitée.
+    """
     return pygame.font.Font("assets/font/The walking font.ttf", size)
 
-# fonction pour jouer
+# Fonction pour l'écran de jeu
 def play():
     """
-        Commence le jeu. Il comprend également une option pour revenir au menu principal.
+    Cette fonction gère l'écran de jeu.
     """
     while True:
-        PLAY_MOUSE_POS = pygame.mouse.get_pos()
+        game(SCREEN, surface, get_font(10))
 
-        SCREEN.fill("black")
-
-        PLAY_TEXT = get_font(45).render("This is the PLAY screen.", True, "White")
-        PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 260))
-        SCREEN.blit(PLAY_TEXT, PLAY_RECT)
-
-        PLAY_BACK = Button(image=None, pos=(640, 460),
-                           text_input="BACK", font=get_font(75), base_color="White", hovering_color="Green")
-
-        PLAY_BACK.changeColor(PLAY_MOUSE_POS)
-        PLAY_BACK.update(SCREEN)
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if PLAY_BACK.checkForInput(PLAY_MOUSE_POS):
-                    main_menu()
-
-        pygame.display.update()
-
-# fonction pour les options
+# Fonction pour l'écran des options
 def options():
     """
-    Fournit des options pour choisir la difficulté du jeu. Il comprend également une option pour revenir au menu principal.
+    Cette fonction gère l'écran des options.
     """
     global difficulty
     while True:
@@ -71,7 +57,7 @@ def options():
 
         SCREEN.fill("white")
 
-        OPTIONS_TEXT = get_font(45).render("Choose your game difficulty", True, "Black")
+        OPTIONS_TEXT = get_font(45).render("Chose your game difficulty", True, "Black")
         OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(640, 100))
         SCREEN.blit(OPTIONS_TEXT, OPTIONS_RECT)
 
@@ -84,14 +70,14 @@ def options():
         OPTIONS_BACK = Button(image=None, pos=(640, 650),
                               text_input="GO BACK", font=get_font(75), base_color="Black", hovering_color="Grey")
 
-        # Update la couleur de base selon si le bouton est sélectionné ou non
+        # Mise à jour de la couleur de base en fonction de l'attribut sélectionné
         OPTIONS_EASY.base_color = "Grey" if OPTIONS_EASY.selected else "Black"
         OPTIONS_NORMAL.base_color = "Grey" if OPTIONS_NORMAL.selected else "Black"
         OPTIONS_HARD.base_color = "Grey" if OPTIONS_HARD.selected else "Black"
 
         mouse_pos = pygame.mouse.get_pos()
         for button in [OPTIONS_BACK, OPTIONS_EASY, OPTIONS_NORMAL, OPTIONS_HARD]:
-            button.changeColor(mouse_pos)  # Changer la couleur du bouton si la souris est dessus
+            button.changeColor(mouse_pos)
             button.update(SCREEN)
 
         for event in pygame.event.get():
@@ -122,7 +108,7 @@ def options():
 # Fonction pour le menu principal
 def main_menu():
     """
-    Affiche le menu principal du jeu. Il comprend des options pour jouer au jeu, changer de difficulté et quitter le jeu.
+    Cette fonction gère le menu principal.
     """
     while True:
         SCREEN.blit(BG, (0, 0))
@@ -151,8 +137,8 @@ def main_menu():
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
+                    pygame.mixer.music.stop()
                     play()
-                    music.stop()
                 if OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
                     options()
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
@@ -161,5 +147,5 @@ def main_menu():
 
         pygame.display.update()
 
-# Start the game
+# Appel de la fonction du menu principal
 main_menu()
