@@ -22,6 +22,7 @@ class Room:
                 rect = pygame.Rect(
                     x * self._tile_size, y * self._tile_size, self._tile_size, self._tile_size)
                 pygame.draw.rect(screen, color, rect)
+    
 
 
                     
