@@ -1,4 +1,3 @@
 class Map:
-
-    def __init__(self, name, description, image):
-        self.name = name
+    def __init__(self, rooms):
+        self.rooms = []
