@@ -1,6 +1,6 @@
 from enum import Enum
 
-class RoomType(Enum):
+class Direction(Enum):
     NORTH = 1
     EAST = 2
     SOUTH = 3

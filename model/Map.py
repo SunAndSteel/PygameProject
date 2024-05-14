@@ -1,19 +1,17 @@
 import heapq
 import random
-from RoomType import RoomType
+from Direction import Direction
 
 class Map:
     def __init__(self):
         self._rooms = 10
         self._tile_map = self.__generate_map(self._col, self._row)
 
-
-
     def __generate_map(self):
         """Matrice qui représente les salles
         """
 
-
+#TODO : brouillon, implémenter plus spécifiquement
 # Constants
 EMPTY = 0
 START = 1
@@ -21,32 +19,25 @@ FINAL = 2
 PATH = 3
 
 # Function to generate a random map
-
-
 def generate_map(width, height):
     """
     Fonction pour generer une carte aleatoire
     """
     map_array = [[EMPTY for _ in range(width)] for _ in range(height)]
 
-    # Choose random coordinates for the starting room
     start_x = random.randint(0, width - 1)
     start_y = random.randint(0, height - 1)
     map_array[start_y][start_x] = START
 
-    # Choose random coordinates for the final room (ensure it's not the same as the starting room)
     final_x, final_y = start_x, start_y
     while (final_x, final_y) == (start_x, start_y):
         final_x = random.randint(0, width - 1)
         final_y = random.randint(0, height - 1)
     map_array[final_y][final_x] = FINAL
 
-    # Connect the starting and final rooms
     connect_rooms(map_array, start_x, start_y, final_x, final_y)
 
     return map_array
-
-# Function to connect the starting and final rooms
 
 
 def connect_rooms(map_array, start_x, start_y, final_x, final_y):
@@ -91,6 +82,7 @@ def display_map(map_array):
     for row in map_array:
         print(" ".join(str(cell) for cell in row))
 # Example usage
+# TODO : brouillon
 width = 10
 height = 10
 map_array = generate_map(width, height)
