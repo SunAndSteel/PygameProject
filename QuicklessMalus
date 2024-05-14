@@ -1,0 +1,14 @@
+import pygame
+from Malus import Malus
+from Entity import *
+import Hero
+
+class QuicklessMalus(Malus):
+    def __init__(self):
+        super().init()
+        self.speed_decrease_count = 5
+
+
+
+    def speed_decrease(self, hero:Hero):
+        Hero.speed -= self.speed_decrease_count

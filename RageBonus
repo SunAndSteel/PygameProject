@@ -1,0 +1,11 @@
+import Bonus
+import Hero 
+
+class RageBonus(Bonus):
+    def __init__(self):
+        super().__init__()
+        self.bonus_damage = 10
+
+
+    def healing(self, hero:Hero):
+        Hero.strength_power += self.bonus_damage

@@ -1,0 +1,12 @@
+import Bonus
+import Hero
+
+class SpeedBonus(Bonus):
+    def __init__(self):
+        super().__init__()
+        self.speed_bonus = 10
+
+
+
+    def speed_increase(self, hero:Hero):
+        Hero.speed += self.speed_bonus

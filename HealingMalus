@@ -1,0 +1,15 @@
+import pygame
+from Entity import *
+from Item import Item
+from Malus import Malus
+import Hero
+
+class HealingMalus(Malus):
+    def __init__(self):
+        super().__init__()
+        self.heal_decrease_count = 5
+
+    
+
+    def heal_decrease(self, hero:Hero):
+        Hero.health -= self.heal_decrease_count
