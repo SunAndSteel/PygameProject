@@ -21,7 +21,7 @@ surface = pygame.Surface((width, height), pygame.SRCALPHA)
 # Chargement de l'image de fond
 BG = pygame.image.load("assets/Graphics/Background_menu.jpg")
 
-music_files = ["assets/sound/Menu music.mp3","assets/sound/Menu music.mp3","assets/sound/Menu music.mp3", "assets/sound/Menu music 1.mp3"]
+music_files = ["assets/sound/Menu song.mp3","assets/sound/Menu song.mp3","assets/sound/Menu song.mp3", "assets/sound/Menu song 2.mp3"]
 music = random.choice(music_files)
 pygame.mixer.music.load(music)
 pygame.mixer.music.set_volume(0.5)
@@ -36,15 +36,15 @@ def get_font(size):
     """
     Cette fonction retourne la police souhaitée.
     """
-    return pygame.font.Font("assets/font/The walking font.ttf", size)
+    return pygame.font.Font("assets/font/Rengkoxpersonal.otf", size)
 
 # Fonction pour l'écran de jeu
 def play():
     """
     Cette fonction gère l'écran de jeu.
     """
-    while True:
-        game(SCREEN, surface, get_font(10))
+    game(SCREEN, surface, get_font(36))
+
 
 # Fonction pour l'écran des options
 def options():
@@ -149,3 +149,5 @@ def main_menu():
 
 # Appel de la fonction du menu principal
 main_menu()
+
+
