@@ -1,0 +1,8 @@
+import pygame
+from Item import Item
+
+class Bonus(Item):
+    def __init__(self, permanent):
+        super().__init__()
+        self.permanent = False
+
