@@ -12,7 +12,7 @@ width, height = 1280, 720
 screen = pygame.display.set_mode((width, height))
 background = pygame.image.load("assets/Graphics/background.png")
 background = pygame.transform.scale(background, (width, height))
-
+pygame.draw.line(background, (0, 0, 0), (780, 0), (780, 720), 5)
 
 pygame.display.set_caption("Binding of Isaac")
 

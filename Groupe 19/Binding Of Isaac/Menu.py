@@ -5,7 +5,6 @@ Ce module contient le menu principal du jeu "Binding of Isaac".
 # Importation des modules nécessaires
 import pygame, sys
 from Menu_button import Button
-from main import game
 import random
 
 # Initialisation de pygame
@@ -20,6 +19,7 @@ surface = pygame.Surface((width, height), pygame.SRCALPHA)
 
 # Chargement de l'image de fond
 BG = pygame.image.load("assets/Graphics/image_jeu.png")
+BG = pygame.transform.scale(BG, (width, height))
 
 music_files = ["assets/sound/Menu song.mp3","assets/sound/Menu song.mp3","assets/sound/Menu song.mp3", "assets/sound/Menu song 2.mp3"]
 music = random.choice(music_files)
@@ -43,7 +43,8 @@ def play():
     """
     Cette fonction gère l'écran de jeu.
     """
-    game(SCREEN, surface, get_font(36))
+    pass
+    #game(SCREEN, surface, get_font(36))
 
 
 # Fonction pour l'écran des options
