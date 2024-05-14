@@ -1,18 +1,16 @@
 import pygame
-import random
+from Material import Material
+from Door import Door
+
 class Room:
-    def __init__(self, walls, doors):
-        self._walls = walls
+    def __init__(self, doors):
         self._items_of_room = [] 
-        self._doors = doors
+        self._doorsNumbers = Door.DOORS
         self._tile_size = 32
-        self._col = random.randint(10, 20)
-        self._row = random.randint(10, 20)
-        self._tile_map = self.__generate_room(self.col, self.row)
-        self.tile_colors = {
-            0: (0, 0, 0),
-            1: (255, 255, 255)
-        }
+        self._col = 40
+        self._row = 20
+        self._tile_map = self.__generate_room(self._col, self._row)
+        self.tile_skin = Material.Material.WALL
 
     def draw(self, screen):
         """
@@ -26,7 +24,7 @@ class Room:
     
     def __generate_room(self, cols, rows):
         """
-        Génération d'une matrice de 0 et de 1 représentant la bordure de la salle
+        Génération d'une matrice de représentant la bordure de la salle
         """
         matrix = [[0 for _ in range(cols)] for _ in range(rows)]
         for i in range(rows):
