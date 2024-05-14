@@ -22,6 +22,7 @@ class Hero(Entity):
                 self.weapons = hero_data.get("weapons", [])
                 self.shield = hero_data.get("shield", None)
                 self.image_path = hero_data.get("image_path")
+                self.is_dead = hero_data.get("is_dead", False)
                 if self.image_path:
                     self.load_entity_image(self.image_path)
                 self.rect = self.image.get_rect()
