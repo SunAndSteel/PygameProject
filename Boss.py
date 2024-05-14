@@ -33,6 +33,12 @@ class Boss(Entity):
         except Exception as e:
             print(f"Erreur lors du chargement des données depuis le fichier JSON: {e}")
 
+
+
+    def spawn(self):
+        print("Le boss apparait")
+
+
     def update(self):
         super().update()
         if self.mouvements in ["up-down", "down-up"]:

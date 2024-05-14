@@ -3,7 +3,7 @@
     "strength_power": 5,
     "health": 200,
     "max_health": 200,
-    "image_path": "Entitys/ressources_entity_hero/player-maggie.png",
+    "image_path": "Entitys/ressources_entity_hero/player-princess.png",
     "name": "Terratae",
     "fury_mode": true,
     "resistance": 50,

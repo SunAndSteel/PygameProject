@@ -11,6 +11,7 @@ class Entity(pygame.sprite.Sprite):
     def __init__(self, path):
         super().__init__()
         self.speed = 2.5
+        self.is_dead = False
         self.strength_power = 1
         self.health = 100
         self.max_health = 100
@@ -54,6 +55,7 @@ class Entity(pygame.sprite.Sprite):
                 self.strength_power = player_data_from_json.get("strength_power", self.strength_power)
                 self.health = player_data_from_json.get("health", self.health)
                 self.max_health = player_data_from_json.get("max_health", self.max_health)
+                self.is_dead = player_data_from_json.get("True", self.is_dead)
                 image_path = player_data_from_json.get("image_path")
                 if image_path is not None or os.path.exists(image_path):
                     self.load_entity_image(image_path)

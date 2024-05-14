@@ -4,5 +4,6 @@
   "weapons": [ "Sword", "Bow" ],
   "shield": "Wooden Shield",
   "image_path": "Entitys/ressources_entity_hero/player-princess.png",
-  "name": "Rick"
+  "name": "Rick",
+  "is_dead" : "False"
 }

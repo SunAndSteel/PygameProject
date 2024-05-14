@@ -63,7 +63,6 @@ class Mob(Boss):
             screen.blit(info_surface, (self.rect.x, self.rect.y - 50))
             pygame.display.flip()
 
-
 if __name__ == '__main__':
     # Assurez-vous d'importer la classe Hero correctement
     hero = Hero("Entitys/Mobs/Hero/hero.json")
