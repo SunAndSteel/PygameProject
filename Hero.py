@@ -1,6 +1,6 @@
-import pygame
 import json
-from Entitys.Entity import Entity
+import pygame
+from Entity import Entity
 
 pygame.init()
 HAUTEUR, LARGEUR = 800, 800

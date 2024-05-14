@@ -1,11 +1,11 @@
 {
-  "name": "Bellion",
-  "speed": 2.5,
-  "strength_power": 555,
-  "health": 200,
-  "max_health": 200,
-  "image_path": "Entitys/ressources_entity_hero/test_entity_image.png",
-  "mouvements": "up-down",
-  "fury_mode": true,
-  "resistance": 200
+    "speed": 3.0,
+    "strength_power": 5,
+    "health": 200,
+    "max_health": 200,
+    "image_path": "Entitys/ressources_entity_hero/player-maggie.png",
+    "name": "Terratae",
+    "fury_mode": true,
+    "resistance": 50,
+    "mouvements": "left-right"
 }
