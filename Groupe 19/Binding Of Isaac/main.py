@@ -16,7 +16,7 @@ pygame.draw.circle(screen, (255, 0, 0), (400, 300), 50)
 
 fps = pygame.time.Clock()
 pause = False
-font = pygame.font.Font('assets/font/Rengkoxpersonal.otf', 36)
+font = pygame.font.Font('assets/font/Hammer God Font DEMO.ttf', 36)
 
 
 

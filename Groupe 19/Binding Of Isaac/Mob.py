@@ -8,7 +8,7 @@ ADDMOB = pygame.USEREVENT + 1
 pygame.time.set_timer(ADDMOB, 5000)  # Add a mob every 5 seconds
 
 mobs = []
-screen = pygame.display.set_mode((1000, 800))
+screen = pygame.display.set_mode((1280, 720))
 
 zombie1 = pygame.image.load("assets/Graphics/player-rick.png").convert_alpha()
 zombie1 = pygame.transform.scale(zombie1, (100, 100))

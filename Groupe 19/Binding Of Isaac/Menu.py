@@ -19,12 +19,12 @@ pygame.display.set_caption("Menu")
 surface = pygame.Surface((width, height), pygame.SRCALPHA)
 
 # Chargement de l'image de fond
-BG = pygame.image.load("assets/Graphics/Background_menu.jpg")
+BG = pygame.image.load("assets/Graphics/image_jeu.png")
 
 music_files = ["assets/sound/Menu song.mp3","assets/sound/Menu song.mp3","assets/sound/Menu song.mp3", "assets/sound/Menu song 2.mp3"]
 music = random.choice(music_files)
 pygame.mixer.music.load(music)
-pygame.mixer.music.set_volume(0.5)
+pygame.mixer.music.set_volume(0.4)
 pygame.mixer.music.play(-1)
 
 
@@ -36,7 +36,7 @@ def get_font(size):
     """
     Cette fonction retourne la police souhaitée.
     """
-    return pygame.font.Font("assets/font/Rengkoxpersonal.otf", size)
+    return pygame.font.Font("assets/font/Hammer God Font DEMO.ttf", size)
 
 # Fonction pour l'écran de jeu
 def play():
