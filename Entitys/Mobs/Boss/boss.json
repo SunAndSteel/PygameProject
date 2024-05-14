@@ -7,5 +7,5 @@
     "name": "Terratae",
     "fury_mode": true,
     "resistance": 50,
-    "mouvements": "left-right"
+    "mouvements": "up-down"
 }

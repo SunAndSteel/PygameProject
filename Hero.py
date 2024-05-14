@@ -19,7 +19,7 @@ class Hero(Entity):
                 hero_data = json.load(file)
                 self.speed = hero_data.get("speed", 2.5)
                 self.bonus = hero_data.get("bonus", [])
-                self.armes = hero_data.get("armes", [])
+                self.weapons = hero_data.get("weapons", [])
                 self.shield = hero_data.get("shield", None)
                 self.image_path = hero_data.get("image_path")
                 if self.image_path:

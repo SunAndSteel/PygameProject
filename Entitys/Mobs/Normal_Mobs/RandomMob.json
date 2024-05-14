@@ -1,0 +1,15 @@
+{
+  "speed": 3.0,
+  "bonus": [ "Strength", "Agility" ],
+  "weapons": [ "Sword", "Bow" ],
+  "shield": "Wooden Shield",
+  "image_path": "Entitys/ressources_entity_hero/player-princess.png",
+  "name": "Amerindien",
+  "resistance": 0.5,
+  "Level": 1,
+  "deplacement": "right-left",
+  "position": {
+    "x": 0,
+    "y": 0
+  }
+}

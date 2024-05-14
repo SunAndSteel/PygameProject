@@ -1,7 +1,7 @@
 {
   "speed": 3.0,
   "bonus": [ "Strength", "Agility" ],
-  "armes": [ "Sword", "Bow" ],
+  "weapons": [ "Sword", "Bow" ],
   "shield": "Wooden Shield",
   "image_path": "Entitys/ressources_entity_hero/player-princess.png",
   "name": "Rick"
