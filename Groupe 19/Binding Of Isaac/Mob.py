@@ -1,89 +1,86 @@
+import json
 import pygame
-from random import randint, randrange
+from Boss import Boss
+from Hero import Hero
 
+HAUTEUR, LARGEUR = 800, 800
+
+# Initialisation de Pygame
 pygame.init()
+screen = pygame.display.set_mode((HAUTEUR, LARGEUR))
+clock = pygame.time.Clock()
 
-# Add a timer for adding mobs
-ADDMOB = pygame.USEREVENT + 1
-pygame.time.set_timer(ADDMOB, 5000)  # Add a mob every 5 seconds
 
-mobs = []
-screen = pygame.display.set_mode((1280, 720))
+class Mob(Boss):
+    def __init__(self, path, target):
+        super().__init__(path)
+        self.resistance = 1
+        self.deplacement = "right-left"
+        self.level = 50
+        self.load_mob_data(path)
+        self.target = target  # Le joueur que le mob doit poursuivre
 
-zombie1 = pygame.image.load("assets/Graphics/player-rick.png").convert_alpha()
-zombie1 = pygame.transform.scale(zombie1, (100, 100))
-zombie2 = pygame.image.load("assets/Graphics/player-princess.png").convert_alpha()
-zombie2 = pygame.transform.scale(zombie2, (100, 100))
+    def load_mob_data(self, path):
+        try:
+            with open(path, 'r') as file:
+                mob_data = json.load(file)
+                self.resistance = mob_data.get("resistance", self.resistance)
+                self.deplacement = mob_data.get("deplacement", self.deplacement)
+                self.level = mob_data.get("level", self.level)
+        except FileNotFoundError:
+            print(f"Erreur : fichier JSON introuvable - {path}")
+        except json.JSONDecodeError:
+            print(f"Erreur : fichier JSON malformé - {path}")
+        except Exception as e:
+            print(f"Erreur lors du chargement des données depuis le fichier JSON: {e}")
 
-class Mob(pygame.sprite.Sprite):
-    def __init__(self, image, x, y):
-        super().__init__()
-        self.image = image
-        self.rect = self.image.get_rect(topleft=(x, y))
+    def update(self):
+        if self.target:
+            if self.rect.x < self.target.rect.x:
+                self.rect.x += self.speed
+            elif self.rect.x > self.target.rect.x:
+                self.rect.x -= self.speed
 
-    def intersects(self, other):
-        return self.rect.colliderect(other.rect)
+            if self.rect.y < self.target.rect.y:
+                self.rect.y += self.speed
+            elif self.rect.y > self.target.rect.y:
+                self.rect.y -= self.speed
 
-    def draw(self, surface):
-        surface.blit(self.image, self.rect)
+        super().update()
 
-class Boss(pygame.sprite.Sprite):
-    def __init__(self, image, x, y):
-        super().__init__()
-        self.image = image
-        self.rect = self.image.get_rect(topleft=(x, y))
+    def show_informations(self):
+        super().show_informations()
+        if self.show_player_information:
+            info_surface = pygame.Surface((200, 50))
+            info_surface.fill((0, 0, 0))
+            info = [
+                f"Résistance: {self.resistance}",
+                f"Deplacement: {self.deplacement}",
+                f"Level: {self.level}"
+            ]
+            for i, text in enumerate(info):
+                info_surface.blit(pygame.font.SysFont(None, 20).render(text, True, (255, 255, 255)), (10, i * 20))
+            screen.blit(info_surface, (self.rect.x, self.rect.y - 50))
+            pygame.display.flip()
 
-    def intersects(self, other):
-        return self.rect.colliderect(other.rect)
+if __name__ == '__main__':
+    # Assurez-vous d'importer la classe Hero correctement
+    hero = Hero("Entitys/Mobs/Hero/hero.json")
+    mob = Mob("Entitys/Mobs/Normal_Mobs/RandomMob.json", hero)
 
-    def draw(self, surface):
-        surface.blit(self.image, self.rect)
+    all_sprites = pygame.sprite.Group()
+    all_sprites.add(hero)
+    all_sprites.add(mob)
 
-class Obstacle(pygame.sprite.Sprite):
-    def __init__(self, image, x, y):
-        super().__init__()
-        self.image = image
-        self.rect = self.image.get_rect(topleft=(x, y))
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+        all_sprites.update()
+        screen.fill((0, 0, 0))
+        all_sprites.draw(screen)
+        pygame.display.flip()
+        clock.tick(60)
 
-    def intersects(self, other):
-        return self.rect.colliderect(other.rect)
-
-    def draw(self, surface):
-        surface.blit(self.image, self.rect)
-
-def add_mob(max_mobs=4):
-    global mobs
-
-    entry_point = (1000,400)
-    min_distance_from_entry = 100  # Minimum distance from entry point
-    while len(mobs) < max_mobs:
-        mob_image = zombie1 if randrange(0, 2) == 0 else zombie2
-        mob_x, mob_y = randint(0, screen.get_width()), randint(0, screen.get_height())
-
-        if ((mob_x - entry_point[0]) ** 2 + (mob_y - entry_point[1]) ** 2) ** 0.5 < min_distance_from_entry:
-            continue
-
-        mob = Mob(mob_image, mob_x, mob_y)
-
-        if any(mob.intersects(other_mob) for other_mob in mobs) or mob.rect.right >= 700 or mob.rect.bottom >= 600 or mob.rect.left < 0 or mob.rect.top < 0:
-            continue
-
-        mobs.append(mob)
-        mob.draw(screen)  # Draw the mob on the screen
-
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-
-        # Add a mob when the timer event occurs
-        if event.type == ADDMOB:
-            add_mob()
-
-    # Draw all the mobs
-    for mob in mobs:
-        mob.draw(screen)
-
-    pygame.display.update()
-
-    pygame.time.Clock().tick(60)
+    pygame.quit()

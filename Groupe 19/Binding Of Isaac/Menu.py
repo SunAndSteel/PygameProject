@@ -14,7 +14,7 @@ pygame.init()
 width, height = 1280, 720
 
 # Configuration de l'affichage
-SCREEN = pygame.display.set_mode((width, height))
+SCREEN = pygame.display.set_mode((width, height), pygame.NOFRAME)
 pygame.display.set_caption("Menu")
 surface = pygame.Surface((width, height), pygame.SRCALPHA)
 
@@ -118,11 +118,11 @@ def main_menu():
         MENU_TEXT = get_font(100).render("MAIN MENU", True, "#b68f40")
         MENU_RECT = MENU_TEXT.get_rect(center=(640, 100))
 
-        PLAY_BUTTON = Button(image=pygame.image.load("assets/Graphics/Play Rect.png"), pos=(640, 250),
+        PLAY_BUTTON = Button(image=None, pos=(640, 250),
                              text_input="PLAY", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
-        OPTIONS_BUTTON = Button(image=pygame.image.load("assets/Graphics/Options Rect.png"), pos=(640, 400),
+        OPTIONS_BUTTON = Button(image=None, pos=(640, 400),
                                 text_input="DIFFICULTY", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
-        QUIT_BUTTON = Button(image=pygame.image.load("assets/Graphics/Quit Rect.png"), pos=(640, 550),
+        QUIT_BUTTON = Button(image=None, pos=(640, 550),
                              text_input="QUIT", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
 
         SCREEN.blit(MENU_TEXT, MENU_RECT)

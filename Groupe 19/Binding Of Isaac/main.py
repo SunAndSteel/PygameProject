@@ -2,16 +2,20 @@ import pygame
 from sys import exit
 from Menu_button import Button
 import time
-
-width, height = 1280, 720
+from Hero import Hero
+from Mob_spawn import ADDMOB, add_mob, mobs
 
 pygame.init()
 
+width, height = 1280, 720
 
 screen = pygame.display.set_mode((width, height))
-screen.fill("white")
+background = pygame.image.load("assets/Graphics/background.png")
+background = pygame.transform.scale(background, (width, height))
+
+
 pygame.display.set_caption("Binding of Isaac")
-pygame.draw.circle(screen, (255, 0, 0), (400, 300), 50)
+
 
 
 fps = pygame.time.Clock()
@@ -54,6 +58,9 @@ font = pygame.font.Font('assets/font/Hammer God Font DEMO.ttf', 36)
 #
 #     pygame.display.update()
 
+hero = Hero("Entitys/Mobs/Hero/hero.json")
+all_sprites = pygame.sprite.Group()
+all_sprites.add(hero)
 
 def game(screen, font, pause=False):
     original_screen = screen.copy()  # Make a copy of the original screen
@@ -67,6 +74,9 @@ def game(screen, font, pause=False):
                 exit()
             if event.type == pygame.KEYDOWN:
                 pass
+            # Add a mob when the timer event occurs
+            if event.type == ADDMOB:
+                add_mob()
         #         if event.key == pygame.K_ESCAPE:
         #             pause = not pause
         #             if pause:
@@ -90,8 +100,16 @@ def game(screen, font, pause=False):
         #     # Restore the original screen when unpaused
         #     screen.blit(original_screen, (0, 0))
 
+        screen.blit(background, (0, 0))
+        all_sprites.update()
+        all_sprites.draw(screen)
+        # Draw all the mobs
+        for mob in mobs:
+            mob.draw(screen)
+
         pygame.display.update()
 
         fps.tick(120)
 
 # Start the game
+game(screen, font, pause=False)
