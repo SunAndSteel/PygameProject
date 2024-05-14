@@ -76,24 +76,3 @@ class Boss(Entity):
                 info_surface.blit(text_render, (10, 10 + i * 20))
             # Affiche la surface d'informations au-dessus du personnage dans le jeu
             screen.blit(info_surface, (self.rect.centerx - info_surface.get_width() // 2, self.rect.top - 30))
-
-
-boss = Boss("Entitys/Mobs/Boss/boss.json")
-all_sprites = pygame.sprite.Group()
-all_sprites.add(boss)
-boss_info = BossInfoShowed(boss)
-all_sprites.add(boss_info)
-
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-
-    all_sprites.update()
-    screen.fill((0, 0, 0))
-    all_sprites.draw(screen)
-    pygame.display.flip()
-    clock.tick(60)
-
-pygame.quit()

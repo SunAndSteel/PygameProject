@@ -1,7 +1,9 @@
 import json
 import pygame
 from Boss import Boss
-from Hero import Hero
+from math import sqrt
+from Hero import *
+
 
 HAUTEUR, LARGEUR = 800, 800
 
@@ -12,19 +14,23 @@ clock = pygame.time.Clock()
 
 
 class Mob(Boss):
-    def __init__(self, path, target):
+    def __init__(self, image, x,y, target,path = 'Entitys/Mobs/Normal_Mobs/RandomMob.json'):
         super().__init__(path)
-        self.resistance = 1
+        self.health = 100
         self.deplacement = "right-left"
         self.level = 50
         self.load_mob_data(path)
         self.target = target  # Le joueur que le mob doit poursuivre
+        self.attack_range = 30  # Define the attack range of the mob
+        self.image = image
+        self.rect = self.image.get_rect(topleft=(x, y))
+        self.last_attack_time = pygame.time.get_ticks()  # Store the time of the last attack
 
     def load_mob_data(self, path):
         try:
             with open(path, 'r') as file:
                 mob_data = json.load(file)
-                self.resistance = mob_data.get("resistance", self.resistance)
+                self.health = mob_data.get("health", self.health)
                 self.deplacement = mob_data.get("deplacement", self.deplacement)
                 self.level = mob_data.get("level", self.level)
         except FileNotFoundError:
@@ -33,6 +39,17 @@ class Mob(Boss):
             print(f"Erreur : fichier JSON malformé - {path}")
         except Exception as e:
             print(f"Erreur lors du chargement des données depuis le fichier JSON: {e}")
+
+    def hurt(self, damage, mobs):
+        self.health -= damage
+        print(f"Mob health: {self.health}")
+        if self.health <= 0:
+            self.kill(mobs)  # Remove the mob if its health reaches 0
+
+    def kill(self, mobs):
+        if self in mobs:
+            mobs.remove(self)
+        super().kill()  # Call the kill method of the superclass
 
     def update(self):
         if self.target:
@@ -46,7 +63,25 @@ class Mob(Boss):
             elif self.rect.y > self.target.rect.y:
                 self.rect.y -= self.speed
 
+
+
         super().update()
+
+
+    def attack(self, target):
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_attack_time >= 1000:  # Check if 1 second has passed since the last attack
+            dist = sqrt((self.rect.x - self.target.rect.x) ** 2 + (self.rect.y - self.target.rect.y) ** 2)
+            if dist <= self.attack_range:
+                target.hurt(10)
+            self.last_attack_time = current_time  # Update the last attack time
+
+
+    def intersects(self, other):
+        return self.rect.colliderect(other.rect)
+
+    def draw(self, surface):
+        surface.blit(self.image, self.rect)
 
     def show_informations(self):
         super().show_informations()
@@ -63,24 +98,3 @@ class Mob(Boss):
             screen.blit(info_surface, (self.rect.x, self.rect.y - 50))
             pygame.display.flip()
 
-if __name__ == '__main__':
-    # Assurez-vous d'importer la classe Hero correctement
-    hero = Hero("Entitys/Mobs/Hero/hero.json")
-    mob = Mob("Entitys/Mobs/Normal_Mobs/RandomMob.json", hero)
-
-    all_sprites = pygame.sprite.Group()
-    all_sprites.add(hero)
-    all_sprites.add(mob)
-
-    running = True
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-        all_sprites.update()
-        screen.fill((0, 0, 0))
-        all_sprites.draw(screen)
-        pygame.display.flip()
-        clock.tick(60)
-
-    pygame.quit()

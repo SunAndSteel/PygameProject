@@ -3,7 +3,9 @@ from sys import exit
 from Menu_button import Button
 import time
 from Hero import Hero
-from Mob_spawn import ADDMOB, add_mob, mobs
+from Mob_spawn import add_mob, mobs, obstacles
+from Weapons import *
+from Obstacle import *
 
 pygame.init()
 
@@ -66,7 +68,8 @@ def game(screen, font, pause=False):
     original_screen = screen.copy()  # Make a copy of the original screen
     pause_bg = None
     screenshot_taken = False
-
+    while len(mobs) < 5:
+        add_mob(hero)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -75,8 +78,7 @@ def game(screen, font, pause=False):
             if event.type == pygame.KEYDOWN:
                 pass
             # Add a mob when the timer event occurs
-            if event.type == ADDMOB:
-                add_mob()
+
         #         if event.key == pygame.K_ESCAPE:
         #             pause = not pause
         #             if pause:
@@ -100,13 +102,30 @@ def game(screen, font, pause=False):
         #     # Restore the original screen when unpaused
         #     screen.blit(original_screen, (0, 0))
 
+        hero.attack(mobs)
+        hero.update(mobs, obstacles)
+
+
+        for mob in mobs:
+            mob.update()
+            mob.attack(hero)
+
+
+
         screen.blit(background, (0, 0))
-        all_sprites.update()
+        for sprite in all_sprites:
+            if sprite != hero:
+                sprite.update()
         all_sprites.draw(screen)
         # Draw all the mobs
         for mob in mobs:
             mob.draw(screen)
-
+        for obstacle in obstacles:
+            obstacle.draw(screen)
+        if isinstance(hero.weapon, Gun):
+            hero.weapon.update(screen,mobs)
+        hero.draw(screen)
+        
         pygame.display.update()
 
         fps.tick(120)
