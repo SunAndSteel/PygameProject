@@ -14,8 +14,8 @@ clock = pygame.time.Clock()
 
 
 class Mob(Boss):
-    def __init__(self, image, x,y, target,path = 'Entitys/Mobs/Normal_Mobs/RandomMob.json'):
-        super().__init__(path)
+    def __init__(self, image, x, y, target, path='Entitys/Mobs/Normal_Mobs/RandomMob.json'):
+        super().__init__(image, x, y, target, path)
         self.health = 100
         self.deplacement = "right-left"
         self.level = 50
@@ -45,6 +45,7 @@ class Mob(Boss):
         print(f"Mob health: {self.health}")
         if self.health <= 0:
             self.kill(mobs)  # Remove the mob if its health reaches 0
+
 
     def kill(self, mobs):
         if self in mobs:

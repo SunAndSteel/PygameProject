@@ -3,8 +3,8 @@
     "strength_power": 5,
     "health": 200,
     "max_health": 200,
-    "image_path": "assets/Graphics/Boss/hitler.png",
-    "name": "Hitler",
+    "image_path": "assets/Graphics/Boss/caporal.png",
+    "name": "Caporal",
     "fury_mode": true,
     "resistance": 50,
     "mouvements": "up-down"

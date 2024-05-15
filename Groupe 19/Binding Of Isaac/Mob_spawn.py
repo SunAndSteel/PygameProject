@@ -2,6 +2,7 @@ import pygame
 from random import randint, randrange, choice
 from Mob import Mob
 from Obstacle import *
+from Boss import Boss
 
 pygame.init()
 
@@ -31,17 +32,10 @@ shield = pygame.transform.scale(shield, (100, 100))
 Rage = pygame.image.load("assets/Graphics/bonus/Piment.png").convert_alpha()
 Rage = pygame.transform.scale(Rage, (100, 100))
 
-class Boss(pygame.sprite.Sprite):
-    def __init__(self, image, x, y):
-        super().__init__()
-        self.image = image
-        self.rect = self.image.get_rect(topleft=(x, y))
-
-    def intersects(self, other):
-        return self.rect.colliderect(other.rect)
-
-    def draw(self, surface):
-        surface.blit(self.image, self.rect)
+Caporal_boss = pygame.image.load("assets/Graphics/Boss/caporal.png").convert_alpha()
+Caporal_boss = pygame.transform.scale(Caporal_boss, (200, 200))
+Hitler_boss = pygame.image.load("assets/Graphics/Boss/hitler.png").convert_alpha()
+Hitler_boss = pygame.transform.scale(Hitler_boss, (200, 200))
 
 
 def add_obstacle(hero, max_obstacles=2):
@@ -67,7 +61,7 @@ def add_obstacle(hero, max_obstacles=2):
     obstacle.draw(screen)  # Draw the obstacle on the screen
 
 
-def add_mob(hero, max_mobs=5, max_obstacles=2):
+def add_mob(hero):
     global mobs
 
     entry_point = (1280,400)
@@ -94,7 +88,17 @@ def add_mob(hero, max_mobs=5, max_obstacles=2):
     mobs.append(mob)
     mob.draw(screen)  # Draw the mob on the screen
 
-    add_obstacle(hero)
+def add_boss(hero):
+    global mobs
+
+    boss = choice([Caporal_boss, Hitler_boss])
+    boss_x, boss_y = randint(0, screen.get_width()), randint(0, screen.get_height())
+
+    boss = Boss(boss, boss_x, boss_y, hero)
+
+    print("Boss added")
+    mobs.append(boss)
+    boss.draw(screen)
 
 
 

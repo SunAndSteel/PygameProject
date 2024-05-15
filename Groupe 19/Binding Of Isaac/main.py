@@ -3,18 +3,20 @@ from sys import exit
 from Menu_button import Button
 import time
 from Hero import Hero
-from Mob_spawn import add_mob, mobs, obstacles
+from Mob_spawn import add_mob, mobs, obstacles, add_boss, add_obstacle
 from Weapons import *
 from Obstacle import *
+from Boss import *
 
 pygame.init()
-
+music = pygame.mixer.music.load("assets/Sound/game track.mp3")
+pygame.mixer.music.play(-1)
+pygame.mixer.music.set_volume(0.3)
 width, height = 1280, 720
 
 screen = pygame.display.set_mode((width, height))
 background = pygame.image.load("assets/Graphics/background.png")
 background = pygame.transform.scale(background, (width, height))
-pygame.draw.line(background, (0, 0, 0), (780, 0), (780, 720), 5)
 
 pygame.display.set_caption("Binding of Isaac")
 
@@ -23,7 +25,7 @@ pygame.display.set_caption("Binding of Isaac")
 fps = pygame.time.Clock()
 pause = False
 font = pygame.font.Font('assets/font/Hammer God Font DEMO.ttf', 36)
-
+projectiles = pygame.sprite.Group()
 
 
 
@@ -68,8 +70,20 @@ def game(screen, font, pause=False):
     original_screen = screen.copy()  # Make a copy of the original screen
     pause_bg = None
     screenshot_taken = False
-    while len(mobs) < 5:
-        add_mob(hero)
+    boss_spawned = False
+    if hero.in_boss_room:
+        # If the player is in the boss room, spawn the boss and obstacles
+        if not boss_spawned and len(mobs) == 0:
+            print("hereez")
+            add_boss(hero)  # You need to implement this function
+            boss_spawned = True
+    else:
+        # If the player is not in the boss room, spawn the mobs
+        while len(mobs) < 5:
+            add_mob(hero)
+    while len(obstacles) < 2:
+        print("Adding obstacle")
+        add_obstacle(hero)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -110,7 +124,13 @@ def game(screen, font, pause=False):
             mob.update()
             mob.attack(hero)
 
+            if isinstance(mob, Boss):
+                mob.attack(hero)
 
+        for projectile in projectiles:
+            if hero.rect.colliderect(projectile.rect):
+                hero.hurt(20)  # Call the hurt method of the player
+                projectile.kill()  # Remove the projectile
 
         screen.blit(background, (0, 0))
         for sprite in all_sprites:
@@ -125,6 +145,9 @@ def game(screen, font, pause=False):
         if isinstance(hero.weapon, Gun):
             hero.weapon.update(screen,mobs)
         hero.draw(screen)
+        # Update and draw the projectiles
+        projectiles.update()
+        projectiles.draw(screen)
         
         pygame.display.update()
 

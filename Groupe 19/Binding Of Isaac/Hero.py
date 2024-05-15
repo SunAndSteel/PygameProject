@@ -21,6 +21,7 @@ class Hero(Entity):
         self.knife_range = self.normal_knife_range  # Set the initial range of the knife
         self.sword_range = self.normal_sword_range
         self.health = 100  # Define the health of the hero
+        self.max_health = 100  # Define the maximum health of the hero
         self.last_attack_time = pygame.time.get_ticks()  # Store the time of the last attack
         self.weapon = Gun()  # Define the weapon of the hero
         self.shield = 0  # Define the shield of the hero
@@ -30,6 +31,7 @@ class Hero(Entity):
         self.crosshair_image = pygame.image.load('assets/Graphics/crosshair.png').convert_alpha()
         self.crosshair_image = pygame.transform.scale(self.crosshair_image, (30, 30))  # Scale the image
         self.crosshair_pos = [0, 0]  # Initialize the position of the crosshair
+        self.in_boss_room = False
 
 
 
@@ -66,7 +68,7 @@ class Hero(Entity):
                 self.last_attack_time = current_time  # Update the last attack time
 
     def hurt(self, damage):
-        if self.shield_state:
+        if self.shield_state and self.shield > 0:
             self.shield -= damage
         else:
             self.shield_state = False

@@ -7,6 +7,7 @@ import pygame, sys
 from Menu_button import Button
 import random
 
+
 # Initialisation de pygame
 pygame.init()
 
@@ -43,8 +44,9 @@ def play():
     """
     Cette fonction gère l'écran de jeu.
     """
-    pass
-    #game(SCREEN, surface, get_font(36))
+    while True:
+        from main import game
+        game(SCREEN, surface, get_font(36))
 
 
 # Fonction pour l'écran des options

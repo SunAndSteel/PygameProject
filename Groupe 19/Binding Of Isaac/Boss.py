@@ -1,22 +1,58 @@
 import json
 import pygame
-
+import random
 from Entitys.BossInfoShowed import BossInfoShowed
 from Entity import Entity
+
 
 HAUTEUR, LARGEUR = 800, 800
 pygame.init()
 screen = pygame.display.set_mode((HAUTEUR, LARGEUR))
 clock = pygame.time.Clock()
 
+class Fireball(pygame.sprite.Sprite):
+    def __init__(self, start_pos, target_pos):
+        super().__init__()
+        image = pygame.image.load('assets/Graphics/Projectiles/fireball.png')  # Load the fireball image
+        self.image = pygame.transform.scale(image, (50, 50))
+        self.rect = self.image.get_rect(center=start_pos)
+        self.direction = pygame.Vector2(target_pos) - self.rect.center  # Calculate the direction to the target
+        self.direction.normalize_ip()  # Normalize the direction vector
+        self.speed = 5
+
+    def update(self):
+        self.rect.center += self.direction * self.speed  # Move in the stored direction
+        if not pygame.display.get_surface().get_rect().colliderect(self.rect):  # If the fireball is outside the screen
+            self.kill()  # Remove the fireball
+
+class FireWall(pygame.sprite.Sprite):
+    def __init__(self, start_pos, target_pos):
+        super().__init__()
+        image = pygame.image.load('assets/Graphics/Projectiles/firewall.png')  # Load the firewall image
+        self.image = pygame.transform.scale(image, (100, 150))
+        self.rect = self.image.get_rect(center=start_pos)
+        self.direction = pygame.Vector2(target_pos) - self.rect.center  # Calculate the direction to the target
+        self.direction.normalize_ip()  # Normalize the direction vector
+        self.speed = 2
+
+    def update(self):
+        self.rect.center += self.direction * self.speed  # Move in the stored direction
+        if not pygame.display.get_surface().get_rect().colliderect(self.rect):  # If the firewall is outside the screen
+            self.kill()  # Remove the firewall
+
 class Boss(Entity):
-    def __init__(self, path):
+    def __init__(self, image, x, y, hero, path = "Entitys/Mobs/Boss/boss.json"):
         super().__init__(path)
         self.fury_mode = False
         self.resistance = 0
         self.mouvements = "right-left"
         self.level = 150
         self.load_boss_data(path)
+        self.image = image
+        self.rect = self.image.get_rect(topleft=(x, y))
+        self.last_attack_time = pygame.time.get_ticks()  # Store the time of the last attack
+        print("hello")
+
 
     def load_boss_data(self, path):
         try:
@@ -33,11 +69,8 @@ class Boss(Entity):
         except Exception as e:
             print(f"Erreur lors du chargement des données depuis le fichier JSON: {e}")
 
-
-
-    def spawn(self):
-        print("Le boss apparait")
-
+    def draw(self, screen):
+        screen.blit(self.image, self.rect)
 
     def update(self):
         super().update()
@@ -76,3 +109,24 @@ class Boss(Entity):
                 info_surface.blit(text_render, (10, 10 + i * 20))
             # Affiche la surface d'informations au-dessus du personnage dans le jeu
             screen.blit(info_surface, (self.rect.centerx - info_surface.get_width() // 2, self.rect.top - 30))
+
+
+    def attack(self, target):
+        from main import projectiles
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_attack_time >= 5000:  # Check if 5 seconds have passed since the last attack
+            attack_type = random.choice(['fireball', 'firewall'])
+            if attack_type == 'fireball':
+                fireball = Fireball(self.rect.center, target.rect.center)
+                projectiles.add(fireball)  # Add the fireball to the projectiles group
+            elif attack_type == 'firewall':
+                firewall = FireWall(self.rect.center, target.rect.center)
+                projectiles.add(firewall)  # Add the firewall to the projectiles group
+            self.last_attack_time = current_time  # Update the last attack time
+
+    def hurt(self, damage, mobs):
+        self.health -= damage
+        print(self.health)
+        if self.health <= 0:
+            mobs.remove(self)  # Remove the boss from the mobs list
+            self.kill()  # Remove the boss from all sprite groups
