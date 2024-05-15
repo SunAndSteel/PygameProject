@@ -6,6 +6,8 @@ Ce module contient le menu principal du jeu "Binding of Isaac".
 import pygame, sys
 from Menu_button import Button
 import random
+from Hero import *
+
 
 
 # Initialisation de pygame
@@ -30,7 +32,7 @@ pygame.mixer.music.play(-1)
 
 
 # Définition de la difficulté par défaut
-difficulty = 'NORMAL'
+difficulty = NORMAL
 
 # Fonction pour obtenir la police souhaitée
 def get_font(size):
@@ -65,11 +67,11 @@ def options():
         SCREEN.blit(OPTIONS_TEXT, OPTIONS_RECT)
 
         OPTIONS_EASY = Button(image=None, pos=(200, 360),
-                             text_input="EASY", font=get_font(75), base_color="Black",hovering_color='Grey', selected=difficulty=='EASY')
+                             text_input="EASY", font=get_font(75), base_color="Black",hovering_color='Grey', selected=difficulty==EASY)
         OPTIONS_NORMAL = Button(image=None, pos=(640, 360),
-                               text_input="NORMAL", font=get_font(75), base_color="Black",hovering_color='Grey', selected=difficulty=='NORMAL')
+                               text_input="NORMAL", font=get_font(75), base_color="Black",hovering_color='Grey', selected=difficulty==NORMAL)
         OPTIONS_HARD = Button(image=None, pos=(1080, 360),
-                             text_input="HARD", font=get_font(75), base_color="Black",hovering_color="Grey", selected=difficulty=='HARD')
+                             text_input="HARD", font=get_font(75), base_color="Black",hovering_color="Grey", selected=difficulty==HARD)
         OPTIONS_BACK = Button(image=None, pos=(640, 650),
                               text_input="GO BACK", font=get_font(75), base_color="Black", hovering_color="Grey")
 
@@ -89,22 +91,23 @@ def options():
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
-                    main_menu()
+                    return difficulty
                 if OPTIONS_EASY.checkForInput(OPTIONS_MOUSE_POS):
-                    difficulty = 'EASY'
+                    difficulty = EASY
                     OPTIONS_EASY.selected = True
                     OPTIONS_NORMAL.selected = False
                     OPTIONS_HARD.selected = False
                 if OPTIONS_NORMAL.checkForInput(OPTIONS_MOUSE_POS):
-                    difficulty = 'NORMAL'
+                    difficulty = NORMAL
                     OPTIONS_EASY.selected = False
                     OPTIONS_NORMAL.selected = True
                     OPTIONS_HARD.selected = False
                 if OPTIONS_HARD.checkForInput(OPTIONS_MOUSE_POS):
-                    difficulty = 'HARD'
+                    difficulty = HARD
                     OPTIONS_EASY.selected = False
                     OPTIONS_NORMAL.selected = False
                     OPTIONS_HARD.selected = True
+                print(difficulty)
 
         pygame.display.update()
 

@@ -10,9 +10,20 @@ HAUTEUR, LARGEUR = 1280, 720
 
 clock = pygame.time.Clock()
 
+class Difficulty:
+    def __init__(self, enemy_damage, player_damage, player_health, player_shield):
+        self.enemy_damage = enemy_damage
+        self.player_damage = player_damage
+        self.player_health = player_health
+        self.player_shield = player_shield
+
+# Create instances for each difficulty level
+EASY = Difficulty(enemy_damage=0.5, player_damage=1.5, player_health=100, player_shield=50)
+NORMAL = Difficulty(enemy_damage=1, player_damage=1, player_health=100, player_shield=0)
+HARD = Difficulty(enemy_damage=1.5, player_damage=1, player_health=50, player_shield=0)
 
 class Hero(Entity):
-    def __init__(self, file_path):
+    def __init__(self, file_path, difficulty):
         super().__init__(path=file_path)
         self.load_from_json(file_path)
         self.rage_end_time = 0
@@ -20,18 +31,18 @@ class Hero(Entity):
         self.normal_sword_range = 150  # Define the range of the sword
         self.knife_range = self.normal_knife_range  # Set the initial range of the knife
         self.sword_range = self.normal_sword_range
-        self.health = 100  # Define the health of the hero
+        self.health = difficulty.player_health  # Define the health of the hero
         self.max_health = 100  # Define the maximum health of the hero
         self.last_attack_time = pygame.time.get_ticks()  # Store the time of the last attack
         self.weapon = Gun()  # Define the weapon of the hero
-        self.shield = 0  # Define the shield of the hero
+        self.shield = difficulty.player_shield  # Define the shield of the hero
         self.max_shield = 100
         self.shield_state = False  # Define the state of the shield
         # Load the crosshair image
         self.crosshair_image = pygame.image.load('assets/Graphics/crosshair.png').convert_alpha()
         self.crosshair_image = pygame.transform.scale(self.crosshair_image, (30, 30))  # Scale the image
         self.crosshair_pos = [0, 0]  # Initialize the position of the crosshair
-        self.in_boss_room = False
+        self.in_boss_room = True
 
 
 
@@ -53,7 +64,6 @@ class Hero(Entity):
             print(f"Error loading hero data from JSON: {e}")
 
     def attack(self, mobs):
-        from Mob import Mob
         mouse_pressed = pygame.mouse.get_pressed()
         if mouse_pressed[0]:  # If left mouse button is clicked
             current_time = pygame.time.get_ticks()
@@ -62,10 +72,10 @@ class Hero(Entity):
                     for mob in mobs:
                         dist = sqrt((self.rect.x - mob.rect.x) ** 2 + (self.rect.y - mob.rect.y) ** 2)
                         if dist <= self.knife_range:
-                            mob.hurt(20, mobs)  # Call the hurt method of the Mob class
+                            mob.hurt(20 * difficulty.player_damage, mobs)  # Call the hurt method of the Mob class
                 elif isinstance(self.weapon, Gun):
                     self.weapon.fire(self, mobs)
-                self.last_attack_time = current_time  # Update the last attack time
+                self.last_attack_time = current_time
 
     def hurt(self, damage):
         if self.shield_state and self.shield > 0:

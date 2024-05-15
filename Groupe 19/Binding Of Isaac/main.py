@@ -7,6 +7,8 @@ from Mob_spawn import add_mob, mobs, obstacles, add_boss, add_obstacle
 from Weapons import *
 from Obstacle import *
 from Boss import *
+from Menu import difficulty
+
 
 pygame.init()
 music = pygame.mixer.music.load("assets/Sound/game track.mp3")
@@ -62,7 +64,7 @@ projectiles = pygame.sprite.Group()
 #
 #     pygame.display.update()
 
-hero = Hero("Entitys/Mobs/Hero/hero.json")
+hero = Hero("Entitys/Mobs/Hero/hero.json", difficulty)
 all_sprites = pygame.sprite.Group()
 all_sprites.add(hero)
 

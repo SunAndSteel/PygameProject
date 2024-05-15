@@ -2,7 +2,7 @@ import json
 import pygame
 from Boss import Boss
 from math import sqrt
-from Hero import *
+
 
 
 HAUTEUR, LARGEUR = 800, 800
@@ -41,10 +41,12 @@ class Mob(Boss):
             print(f"Erreur lors du chargement des données depuis le fichier JSON: {e}")
 
     def hurt(self, damage, mobs):
-        self.health -= damage
-        print(f"Mob health: {self.health}")
+        from main import difficulty
+        self.health -= damage * difficulty.enemy_damage
+        print(self.health)
         if self.health <= 0:
-            self.kill(mobs)  # Remove the mob if its health reaches 0
+            mobs.remove(self)  # Remove the boss from the mobs list
+            self.kill()  # Remove the boss from all sprite groups
 
 
     def kill(self, mobs):
@@ -70,12 +72,13 @@ class Mob(Boss):
 
 
     def attack(self, target):
+        from main import difficulty  # Import here, inside the method
         current_time = pygame.time.get_ticks()
         if current_time - self.last_attack_time >= 1000:  # Check if 1 second has passed since the last attack
             dist = sqrt((self.rect.x - self.target.rect.x) ** 2 + (self.rect.y - self.target.rect.y) ** 2)
             if dist <= self.attack_range:
-                target.hurt(10)
-            self.last_attack_time = current_time  # Update the last attack time
+                target.hurt(10 * difficulty.player_damage, mobs)  # Call the hurt method of the Mob class
+            self.last_attack_time = current_time  # Update the last
 
 
     def intersects(self, other):
