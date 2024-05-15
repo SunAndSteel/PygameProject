@@ -8,6 +8,7 @@ pygame.init()
 HAUTEUR, LARGEUR = 1280, 720
 
 
+
 clock = pygame.time.Clock()
 
 
@@ -20,16 +21,23 @@ class Hero(Entity):
         self.normal_sword_range = 150  # Define the range of the sword
         self.knife_range = self.normal_knife_range  # Set the initial range of the knife
         self.sword_range = self.normal_sword_range
-        self.health = 100  # Define the health of the hero
+        self.health = 200
+        self.max_health = 200
+        self.health_bar_lenght = 400
+        self.health_ratio = self.max_health / self.health_bar_lenght
         self.last_attack_time = pygame.time.get_ticks()  # Store the time of the last attack
         self.weapon = Gun()  # Define the weapon of the hero
         self.shield = 0  # Define the shield of the hero
         self.max_shield = 100
+        self.shield_bar_length = 400
+        self.shield_ratio = self.max_shield / self.shield_bar_length
         self.shield_state = False  # Define the state of the shield
         # Load the crosshair image
         self.crosshair_image = pygame.image.load('assets/Graphics/crosshair.png').convert_alpha()
         self.crosshair_image = pygame.transform.scale(self.crosshair_image, (30, 30))  # Scale the image
         self.crosshair_pos = [0, 0]  # Initialize the position of the crosshair
+        self.heart_image = pygame.transform.scale((pygame.image.load("assets/Graphics/HUD/HUD_heart.png")), (40, 40))
+        self.shield_image = pygame.transform.scale((pygame.image.load("assets/Graphics/HUD/HUD_shield.png")), (50,50))
 
 
 
@@ -74,9 +82,26 @@ class Hero(Entity):
             print("ouile")
             print(f"Hero health: {self.health}")
             if self.health <= 0:
+                self.health = 0
+                Hero.kill(self)
                 print("Le joueur est mort")
 
+
+    def basic_health(self):
+        from main import screen
+        pygame.draw.rect(screen, (255, 0, 0), (45, 10, self.health/self.health_ratio, 25))
+        pygame.draw.rect(screen, (0, 0, 0), (45 ,10, self.health_bar_lenght,25), 2)
+
+
+    def basic_shield(self):
+        from main import screen
+        pygame.draw.rect(screen, (0, 0, 255), (45, 60, self.shield/self.shield_ratio, 25))
+        pygame.draw.rect(screen, (0, 0, 0), (45 ,60, self.shield_bar_length,25), 2)
+
     def update(self, mobs, obstacles):
+        self.basic_health()
+        if self.shield > 0 :
+            self.basic_shield()
         super().update()
         self.check_obstacle_collision(obstacles)
         self.check_rage_end()

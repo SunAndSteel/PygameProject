@@ -18,7 +18,12 @@ class Obstacle(pygame.sprite.Sprite):
 
     def apply_effect(self, hero):
         if self.effect == 'heal':
-            hero.health += 10
+            if hero.health < hero.max_health:
+                hero.health += 10
+            elif hero.health >= hero.max_health:
+                hero.health = hero.max_health
+                print("Le héro à le maximum de pv !")
+
             print(f"Hero health: {hero.health}")
         elif self.effect == 'speed':
             hero.speed += 3
@@ -27,6 +32,8 @@ class Obstacle(pygame.sprite.Sprite):
             hero.shield_state = True
             if hero.shield < hero.max_shield:
                 hero.shield += 20
+            elif hero.shield >= hero.max_shield:
+                hero.shield = hero.max_shield
             print(f"Hero shield: {hero.shield}")
         elif self.effect == 'rage':
             hero.knife_range += 100

@@ -77,6 +77,7 @@ def game(screen, font, pause=False):
                 exit()
             if event.type == pygame.KEYDOWN:
                 pass
+                
             # Add a mob when the timer event occurs
 
         #         if event.key == pygame.K_ESCAPE:
@@ -126,6 +127,14 @@ def game(screen, font, pause=False):
             hero.weapon.update(screen,mobs)
         hero.draw(screen)
         
+        hero.update(mobs, obstacles)
+        
+        screen.blit(hero.heart_image, (2, 2))
+
+        if hero.shield > 0:
+            screen.blit(hero.shield_image, (0, 50))
+
+
         pygame.display.update()
 
         fps.tick(120)

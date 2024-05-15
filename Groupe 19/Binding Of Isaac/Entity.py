@@ -13,8 +13,7 @@ class Entity(pygame.sprite.Sprite):
         self.speed = 2.5
         self.is_dead = False
         self.strength_power = 1
-        self.health = 100
-        self.max_health = 100
+        self.health = 50
         self.image = pygame.Surface((75, 75))
         self.image.fill((255, 0, 0))
         self.rect = self.image.get_rect()
@@ -23,6 +22,7 @@ class Entity(pygame.sprite.Sprite):
         self.path = path
         self.show_player_information = False
         self.load_from_json(path)
+
 
     def update(self):
         if self.rect is not None:

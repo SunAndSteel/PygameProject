@@ -2,6 +2,7 @@ import pygame
 from random import randint, randrange, choice
 from Mob import Mob
 from Obstacle import *
+import os
 
 pygame.init()
 
@@ -11,7 +12,6 @@ pygame.init()
 mobs = []
 obstacles = []
 screen = pygame.display.set_mode((1280, 720))
-
 
 mini_hitler = pygame.image.load("assets/Graphics/Mobs/minihitler.png").convert_alpha()
 mini_hitler = pygame.transform.scale(mini_hitler, (100, 100))
