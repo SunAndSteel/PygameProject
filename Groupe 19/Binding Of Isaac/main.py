@@ -6,6 +6,9 @@ from Hero import Hero
 from Mob_spawn import add_mob, mobs, obstacles
 from Weapons import *
 from Obstacle import *
+from Map import Map
+
+map = Map().generate_map()
 
 pygame.init()
 

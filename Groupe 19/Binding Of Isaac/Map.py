@@ -1,6 +1,5 @@
 import heapq
 import random
-from Direction import Direction
 
 class Map:
     def __init__(self):
@@ -18,7 +17,6 @@ START = 1
 FINAL = 2
 PATH = 3
 
-# Function to generate a random map
 def generate_map(width, height):
     """
     Fonction pour generer une carte aleatoire
@@ -71,20 +69,17 @@ def connect_rooms(map_array, start_x, start_y, final_x, final_y):
                     heapq.heappush(frontier, (priority, (next_x, next_y)))
                     came_from[(next_x, next_y)] = current
 
-    # Mark the path from the starting room to the final room
     current = (final_x, final_y)
     while current != (start_x, start_y):
         map_array[current[1]][current[0]] = PATH
         current = came_from[current]
 
-# Function to display the map
 def display_map(map_array):
     for row in map_array:
         print(" ".join(str(cell) for cell in row))
-# Example usage
 # TODO : brouillon
-width = 10
-height = 10
+width = 5
+height = 5
 map_array = generate_map(width, height)
 display_map(map_array)
 

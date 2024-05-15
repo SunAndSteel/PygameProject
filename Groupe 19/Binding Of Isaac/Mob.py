@@ -16,7 +16,7 @@ clock = pygame.time.Clock()
 class Mob(Boss):
     def __init__(self, image, x,y, target,path = 'Entitys/Mobs/Normal_Mobs/RandomMob.json'):
         super().__init__(path)
-        self.health = 100
+        self.health = 100 
         self.deplacement = "right-left"
         self.level = 50
         self.load_mob_data(path)

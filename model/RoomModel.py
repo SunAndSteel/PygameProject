@@ -1,11 +1,9 @@
 from Material import Material
 
 class Room:
-    items_of_room = [] 
     doorsNumbers = 0
-    tile_size = 32
-    col = 40
-    row = 20
+    col = 45
+    row = 80
     tile_skin = Material.wall
     
     @staticmethod

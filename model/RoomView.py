@@ -18,13 +18,12 @@ class RoomView():
             - 1 : mur
             - 2 : porte (non implémenté)
         """
-        img_wall = pygame.image.load('tiles.png')
         
+        img_wall = pygame.image.load('tiles.png').convert()
 
         for pos_y, y in enumerate(self.tile_map):
             for x in y:
-                print(pos_y)
                 if x == 1:
                     background.blit(img_wall, (x*16, pos_y*16))
                 
-        img_wall.convert()
+        
