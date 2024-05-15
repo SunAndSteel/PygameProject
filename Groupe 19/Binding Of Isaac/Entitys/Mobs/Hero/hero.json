@@ -1,0 +1,9 @@
+{
+  "speed": 5.0,
+  "bonus": [ "Strength", "Agility" ],
+  "weapons": [ "Sword", "Bow" ],
+  "shield": "Wooden Shield",
+  "image_path": "assets/Graphics/players/Batjew.png",
+  "name": "Batjew",
+  "is_dead" : "False"
+}
