@@ -87,8 +87,7 @@ def add_mob(hero, max_mobs=5, max_obstacles=2):
     mob = Mob(mob_image, mob_x, mob_y, hero)
 
     if (any(mob.intersects(other_mob) for other_mob in mobs) or any(mob.intersects(other_obstacle)
-                                                                   for other_obstacle in obstacles) or
-            mob.rect.right >= 1280 or mob.rect.bottom >= 720 or mob.rect.left < 0 or mob.rect.top < 0):
+        for other_obstacle in obstacles) or mob.rect.right >= 1280 or mob.rect.bottom >= 720 or mob.rect.left < 0 or mob.rect.top < 0):
         return
 
     mobs.append(mob)

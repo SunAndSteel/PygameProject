@@ -1,8 +1,10 @@
 import json
 import pygame
+import random
 from Boss import Boss
 from math import sqrt
 from Hero import *
+from Weapons import *
 
 
 HAUTEUR, LARGEUR = 800, 800
@@ -11,6 +13,8 @@ HAUTEUR, LARGEUR = 800, 800
 pygame.init()
 screen = pygame.display.set_mode((HAUTEUR, LARGEUR))
 clock = pygame.time.Clock()
+
+weapon_on_the_floor = []
 
 
 class Mob(Boss):
@@ -44,11 +48,20 @@ class Mob(Boss):
         self.health -= damage
         print(f"Mob health: {self.health}")
         if self.health <= 0:
+            self.drop_weapon()
             self.kill(mobs)  # Remove the mob if its health reaches 0
+
 
     def kill(self, mobs):
         if self in mobs:
+            last_position = self.rect
             mobs.remove(self)
+            if knife in weapon_on_the_floor:
+                Knife().draw_knife(screen, last_position)
+                print("couteau")
+            if gun in weapon_on_the_floor:
+                Gun().draw_gun(screen, last_position)
+                print("Gun")
         super().kill()  # Call the kill method of the superclass
 
     def update(self):
@@ -82,6 +95,24 @@ class Mob(Boss):
 
     def draw(self, surface):
         surface.blit(self.image, self.rect)
+
+
+    def drop_weapon(self):
+        global weapon_on_the_floor
+        knife = Knife()
+        gun = Gun()
+        weapons_list = [knife, gun]
+        chosen_weapon = random.choice(weapons_list)
+        number = 2
+        if number == 2:
+            print("Le nombre est égal à 2 !")
+            if len(weapon_on_the_floor) == 0:
+                print("La liste est vide donc j'append")
+                weapon_on_the_floor.append(chosen_weapon)
+                print(weapon_on_the_floor)
+
+
+
 
     def show_informations(self):
         super().show_informations()
