@@ -28,7 +28,7 @@ class Bullet:
         direction = [self.target[0] - self.pos[0], self.target[1] - self.pos[1]]
         length = math.sqrt(direction[0]**2 + direction[1]**2)
         self.direction = [direction[0]/length, direction[1]/length]
-        self.image = pygame.image.load('assets/Graphics/Projectiles/bullet.png')  # Load the bullet image
+        self.image = pygame.image.load('assets/Graphics/Projectiles/jewstar.png')  # Load the bullet image
         self.image = pygame.transform.scale(self.image, (30, 30))  # Scale the image
 
     def update(self):
