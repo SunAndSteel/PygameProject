@@ -1,0 +1,8 @@
+{
+  "name": "Rick",
+  "speed": 3.0,
+  "strength_power": 2,
+  "health": 150,
+  "max_health": 150,
+  "image_path": "Entitys/ressources_entity_hero/player-rick.png"
+}
