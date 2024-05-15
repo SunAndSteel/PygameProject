@@ -18,7 +18,7 @@ class RoomView():
             - 1 : mur
             - 2 : porte (non implémenté)
         """
-        img_wall = pygame.image.load('wall_tile.png')
+        img_wall = pygame.image.load('tiles.png')
         
 
         for pos_y, y in enumerate(self.tile_map):
