@@ -5,7 +5,8 @@ class RoomView():
     def __init__(self):
         self.tile_map = Room().generate_room(Room.row, Room.col)
 
-    def draw_from_matrix(self, screen):
+    def draw_from_matrix(self, background):
+        background = pygame.Surface((1280, 720))
         """
         Affiche la salle sur l'écran à partir de la matrice.
 
@@ -18,10 +19,12 @@ class RoomView():
             - 2 : porte (non implémenté)
         """
         img_wall = pygame.image.load('wall_tile.png')
-
-        for y in self.tile_map:
-            for x in y:
-                if x == 1:
-                    screen.blit(img_wall, (16*x, 16*y))
-                    pygame.draw.rect(self.img_wall, "black", (0, 0, 32, 32), 1)
         
+
+        for pos_y, y in enumerate(self.tile_map):
+            for x in y:
+                print(pos_y)
+                if x == 1:
+                    background.blit(img_wall, (x*16, pos_y*16))
+                
+        img_wall.convert()

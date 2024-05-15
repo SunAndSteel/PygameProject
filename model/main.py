@@ -12,7 +12,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    r.draw_from_matrix(screen=screen)
+    r.draw_from_matrix(screen)
     
     pygame.display.flip()
     clock.tick(60)
