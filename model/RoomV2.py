@@ -3,10 +3,8 @@ import random
 import pygame
 import json
 
-# Initialisation de pygame
 pygame.init()
 
-# Variables globales pour la taille de la fenêtre
 Longueur = 1280
 Hauteur = 720
 
@@ -14,11 +12,11 @@ class GenerateRoom(pygame.sprite.Sprite):
     """Classe de debug"""
     def __init__(self, map_image, doors):
         super().__init__()
-        self.map_image = map_image
-        self.doors = doors
-        self.image = pygame.image.load(map_image)
-        self.image = pygame.transform.scale(self.image, (Longueur, Hauteur))
-        self.rect = self.image.get_rect()
+        self.__map_image = map_image
+        self.__doors = doors
+        self.__image = pygame.image.load(map_image)
+        self.__image = pygame.transform.scale(self.image, (Longueur, Hauteur))
+        self.__rect = self.image.get_rect()
 
 
     def draw(self, screen):
@@ -31,11 +29,11 @@ class Door(pygame.sprite.Sprite):
     """Classe de debug"""
     def __init__(self, door_direction):
         super().__init__()
-        self.direction = door_direction
-        self.image = pygame.Surface((75, 75))
-        self.image.fill((255, 0, 0))
-        self.rect = self.image.get_rect()
-        self.set_position(self.direction)
+        self.__direction = door_direction
+        self.__image = pygame.Surface((75, 75))
+        self.__image.fill((255, 0, 0))
+        self.__rect = self.image.get_rect()
+        self.__set_position(self.direction)
     
 
     def set_position(self, door_direction):

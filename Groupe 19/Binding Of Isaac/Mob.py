@@ -1,32 +1,21 @@
-import json
-import pygame
 from Boss import Boss
-from math import sqrt
 from Hero import *
 from Projectile import Projectile
-
-
-HAUTEUR, LARGEUR = 800, 800
-
-# Initialisation de Pygame
-pygame.init()
-screen = pygame.display.set_mode((HAUTEUR, LARGEUR))
-clock = pygame.time.Clock()
 
 mort = False
 
 class Mob(Boss):
     def __init__(self, image, x, y, target,Id=2 ):
         super().__init__(image, x, y, target)
-        self.health = 100
-        self.level = 50
-        self.Id = Id
-        self.x = x
-        self.y = y
-        self.target = target
-        self.image = image
-        self.rect = self.image.get_rect(topleft=(x, y))
-        self.last_attack_time = pygame.time.get_ticks()  # Store the time of the last attack
+        self.__health = 100
+        self.__level = 50
+        self.__Id = Id
+        self.__x = x
+        self.__y = y
+        self.__target = target
+        self.__image = image
+        self.__rect = self.image.get_rect(topleft=(x, y))
+        self.__last_attack_time = pygame.time.get_ticks()
 
 
     def constant_pos(self):
@@ -36,15 +25,13 @@ class Mob(Boss):
         self.health -= damage
         print(f"Mob health: {self.health}")
         if self.health <= 0:
-            self.kill(mobs)  # Remove the mob if its health reaches 0
+            self.kill(mobs)
 
     def shoot(self):
         from main import projectiles
         current_time = pygame.time.get_ticks()
         if current_time - self.last_attack_time >= 3000:
-            # Create a new projectile
             projectile = Projectile(self.rect.center, self.target.rect.center , 'assets/Graphics/Projectiles/gaz.png' if self.Id == 2 else 'assets/Graphics/Projectiles/gammedcross.png')
-            # Add the projectile to the projectiles group
             projectiles.add(projectile)
             self.last_attack_time = current_time
 
@@ -67,7 +54,6 @@ class Mob(Boss):
         if self in mobs:
             mobs.remove(self)
         super().kill()
-        # return self.rect.x, self.rect.y
 
     def update(self):
         if self.Id == 2 or self.Id == 3:

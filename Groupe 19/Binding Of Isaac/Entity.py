@@ -3,28 +3,132 @@ import pygame
 import json
 import random
 
-HAUTEUR, LARGEUR = 1280 , 720
+HAUTEUR, LARGEUR = 1280, 720
 pygame.init()
 
 class Entity(pygame.sprite.Sprite):
     def __init__(self, path):
         super().__init__()
-        self.speed = 2.5
-        self.is_dead = False
-        self.strength_power = 1
-        self.health = 100
-        self.max_health = 100
-        self.image = pygame.Surface((75, 75))
-        self.image.fill((255, 0, 0))
-        self.rect = self.image.get_rect()
-        self.rect.center = (HAUTEUR // 2, LARGEUR // 2)
-        self.name = "Entity"
-        self.path = path
-        self.show_player_information = False
-        self.load_from_json(path)
-        self.mouvements = random.choice(["up-down", "down-up", "left-right", "right-left", "carré", "losange", "diagonale"])
-        self.change_movement_time = 5000
+        self.__speed = 2.5
+        self.__is_dead = False
+        self.__strength_power = 1
+        self.__health = 100
+        self.__max_health = 100
+        self.__image = pygame.Surface((75, 75))
+        self.__image.fill((255, 0, 0))
+        self.__rect = self.__image.get_rect()
+        self.__rect.center = (HAUTEUR // 2, LARGEUR // 2)
+        self.__name = "Entity"
+        self.__path = path
+        self.__show_player_information = False
+        self.__load_from_json(path)
+        self.__mouvements = random.choice(["up-down", "down-up", "left-right", "right-left", "carré", "losange", "diagonale"])
+        self.__change_movement_time = 5000
+        self.__movement_timer = 0
 
+    @property
+    def speed(self):
+        return self.__speed
+
+    @speed.setter
+    def speed(self, value):
+        self.__speed = value
+
+    @property
+    def is_dead(self):
+        return self.__is_dead
+
+    @is_dead.setter
+    def is_dead(self, value):
+        self.__is_dead = value
+
+    @property
+    def strength_power(self):
+        return self.__strength_power
+
+    @strength_power.setter
+    def strength_power(self, value):
+        self.__strength_power = value
+
+    @property
+    def health(self):
+        return self.__health
+
+    @health.setter
+    def health(self, value):
+        self.__health = value
+
+    @property
+    def max_health(self):
+        return self.__max_health
+
+    @max_health.setter
+    def max_health(self, value):
+        self.__max_health = value
+
+    @property
+    def image(self):
+        return self.__image
+
+    @image.setter
+    def image(self, value):
+        self.__image = value
+
+    @property
+    def rect(self):
+        return self.__rect
+
+    @rect.setter
+    def rect(self, value):
+        self.__rect = value
+
+    @property
+    def name(self):
+        return self.__name
+
+    @name.setter
+    def name(self, value):
+        self.__name = value
+
+    @property
+    def path(self):
+        return self.__path
+
+    @path.setter
+    def path(self, value):
+        self.__path = value
+
+    @property
+    def show_player_information(self):
+        return self.__show_player_information
+
+    @show_player_information.setter
+    def show_player_information(self, value):
+        self.__show_player_information = value
+
+    @property
+    def mouvements(self):
+        return self.__mouvements
+
+    @mouvements.setter
+    def mouvements(self, value):
+        self.__mouvements = value
+
+    @property
+    def change_movement_time(self):
+        return self.__change_movement_time
+
+    @change_movement_time.setter
+    def change_movement_time(self, value):
+        self.__change_movement_time = value
+
+    @property
+    def movement_timer(self):
+        return self.__movement_timer
+
+    @movement_timer.setter
+    def movement_timer(self, value):
+        self.__movement_timer = value
 
     def change_movement(self):
         possible_movements = ["up-down", "down-up", "left-right", "right-left", "carré", "losange", "diagonale"]
@@ -111,13 +215,9 @@ class Entity(pygame.sprite.Sprite):
         if self.rect.y < 0:
             self.rect.y = 0
         if self.rect.x > HAUTEUR - self.rect.width - 50:
-            self.rect.x = HAUTEUR - self.rect.width -50
+            self.rect.x = HAUTEUR - self.rect.width - 50
         if self.rect.y > LARGEUR - self.rect.height - 50:
             self.rect.y = LARGEUR - self.rect.height - 50
-
-
-
-
 
     def show_informations(self):
         self.show_player_information = not self.show_player_information
@@ -153,5 +253,3 @@ class Entity(pygame.sprite.Sprite):
             print(f"Erreur lors du chargement de l'image : {image_path}: {e}")
             self.image = pygame.Surface((75, 75))
             self.image.fill((255, 0, 0))
-
-

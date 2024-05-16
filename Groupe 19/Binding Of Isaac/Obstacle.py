@@ -2,13 +2,12 @@ import pygame
 
 pygame.init()
 
-
 class Obstacle(pygame.sprite.Sprite):
     def __init__(self, image, x, y, effect):
         super().__init__()
-        self.image = image
-        self.rect = self.image.get_rect(topleft=(x, y))
-        self.effect = effect
+        self.__image = pygame.image.load(image).convert_alpha()
+        self.__rect = self.__image.get_rect(topleft=(x, y))
+        self.__effect = effect
 
     def intersects(self, other):
         return self.rect.colliderect(other.rect)
@@ -32,9 +31,34 @@ class Obstacle(pygame.sprite.Sprite):
         elif self.effect == 'rage':
             hero.knife_range += 100
             hero.sword_range += 100
-            hero.rage_end_time = pygame.time.get_ticks() + 10000  # 10 seconds from now
+            hero.rage_end_time = pygame.time.get_ticks() + 10000
             print(f"Hero attack range: {hero.knife_range} {hero.sword_range}")
         elif self.effect == 'unheal':
             print("ouileaaaaaa")
             hero.hurt(10)
             print(f"Hero health: {hero.health}")
+
+    @property
+    def image(self):
+        return self.__image
+
+    @image.setter
+    def image(self, value):
+        self.__image = value
+
+    @property
+    def rect(self):
+        return self.__rect
+
+    @rect.setter
+    def rect(self, value):
+        self.__rect = value
+
+    @property
+    def effect(self):
+        return self.__effect
+
+    @effect.setter
+    def effect(self, value):
+        self.__effect = value
+
