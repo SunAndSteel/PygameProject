@@ -1,6 +1,9 @@
 import pygame
 import math
 
+screen = pygame.display.set_mode((1280, 720))
+
+
 class Weapon:
     def __init__(self, damage, cooldown):
         self.damage = damage
@@ -55,6 +58,10 @@ class Gun(Weapon):
             bullet = Bullet(hero.rect.center, mouse_pos, self.damage)
             self.bullets.append(bullet)
             self.last_fire_time = pygame.time.get_ticks()
+
+    def draw_gun(self, x, y):
+        pygame.transform.scale(pygame.image.load("assets/Graphics/Weapons/gun.png"), (15, 15))
+        screen.blit(pygame.image.load("assets/Graphics/Weapons/gun.png"), (x,y))
 
     def update(self, screen, mobs):  # Add screen as a parameter
         for bullet in self.bullets:
