@@ -10,8 +10,8 @@ pygame.init()
 Longueur = 1280
 Hauteur = 720
 
-
 class GenerateRoom(pygame.sprite.Sprite):
+    """Classe de debug"""
     def __init__(self, map_image, doors):
         super().__init__()
         self.map_image = map_image
@@ -20,6 +20,7 @@ class GenerateRoom(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (Longueur, Hauteur))
         self.rect = self.image.get_rect()
 
+
     def draw(self, screen):
         screen.blit(self.image, self.rect)
         for door in self.doors:
@@ -27,6 +28,7 @@ class GenerateRoom(pygame.sprite.Sprite):
 
 
 class Door(pygame.sprite.Sprite):
+    """Classe de debug"""
     def __init__(self, door_direction):
         super().__init__()
         self.direction = door_direction
@@ -34,6 +36,7 @@ class Door(pygame.sprite.Sprite):
         self.image.fill((255, 0, 0))
         self.rect = self.image.get_rect()
         self.set_position(self.direction)
+    
 
     def set_position(self, door_direction):
         if door_direction == "nord":
@@ -46,10 +49,10 @@ class Door(pygame.sprite.Sprite):
             self.rect.center = (Longueur, Hauteur / 2)
 
 
-def select_map(map_dir):
+def select_map(__map_dir):
     files = []
-    for file in os.listdir(map_dir):
-        potential_map = os.path.join(map_dir, file)
+    for file in os.listdir(__map_dir):
+        potential_map = os.path.join(__map_dir, file)
         if os.path.isfile(potential_map):
             files.append(potential_map)
 
@@ -78,17 +81,25 @@ def generate_doors(previous_door=None):
 
 
 class MapOfRoom(pygame.sprite.Sprite):
-    def __init__(self, map_dir, num_rooms):
+    """
+    Réprensentation des infos à l'écran pour la minimap
+    """
+    def __init__(self, __map_dir, num_rooms):
         super().__init__()
-        self.map_dir = map_dir
-        self.num_rooms = num_rooms
+        self.__map_dir = __map_dir
+        self.__num_rooms = num_rooms
+        self.__generate_path()
         self.rooms = []
-        self.generate_path()
 
     def generate_path(self):
+        """_summary_
+
+        Raises:
+            FileNotFoundError: _description_
+        """
         previous_door = None
         for _ in range(self.num_rooms):
-            selected_map = select_map(self.map_dir)
+            selected_map = select_map(self.__map_dir)
             if not selected_map:
                 raise FileNotFoundError(
                     "Aucune carte trouvée dans le répertoire spécifié.")
@@ -101,26 +112,26 @@ class MapOfRoom(pygame.sprite.Sprite):
         for room in self.rooms:
             room.draw(screen)
 
+    @property
+    def num_rooms(self):
+        return self.__num_rooms
 
-# Lire les données JSON
+
+#Debug direct sur la classe
 with open('data.json', 'r') as f:
     data = json.load(f)
 
-# Créer l'objet MapOfRoom avec le nombre de pièces souhaité
-map_of_room = MapOfRoom(data["map_dir"], num_rooms=4)
+map_of_room = MapOfRoom(data["__map_dir"], num_rooms=4)
 
-# Initialiser l'écran de pygame
 screen = pygame.display.set_mode((Longueur, Hauteur))
 pygame.display.set_caption("Example")
 
-# Boucle principale de pygame
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
-    # Dessiner la carte des pièces générée
     screen.fill((0, 0, 0))
     map_of_room.draw(screen)
     pygame.display.flip()

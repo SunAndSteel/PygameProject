@@ -1,20 +1,27 @@
 from RoomView import RoomView
+from RoomV2 import MapOfRoom
 import pygame
+import json
 
-pygame.init()
-screen = pygame.display.set_mode((1280, 720))
-clock = pygame.time.Clock()
+longueur = 1280
+hauteur = 720
+
+with open('data.json', 'r') as f:
+    data = json.load(f)
+
+map_of_room = MapOfRoom(data["__map_dir"], num_rooms=4)
+
+screen = pygame.display.set_mode(longueur, hauteur)
+pygame.display.set_caption("Example")
+
 running = True
-r = RoomView()
-
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
-    r.draw_from_matrix(screen)
-    
+    screen.fill((0, 0, 0))
+    map_of_room.draw(screen)
     pygame.display.flip()
-    clock.tick(60)
 
 pygame.quit()
