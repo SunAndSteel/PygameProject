@@ -9,7 +9,9 @@ HAUTEUR, LARGEUR = 1280, 720
 
 
 clock = pygame.time.Clock()
-
+gun = Gun()
+knife = Knife()
+sword = Sword()
 
 class Hero(Entity):
     def __init__(self, file_path):
@@ -25,7 +27,7 @@ class Hero(Entity):
         self.health_bar_lenght = 400
         self.health_ratio = self.max_health / self.health_bar_lenght
         self.last_attack_time = pygame.time.get_ticks()  # Store the time of the last attack
-        self.weapon = Gun()  # Define the weapon of the hero
+        self.weapon = gun  # Define the weapon of the hero
         self.shield = 0  # Define the shield of the hero
         self.max_shield = 100
         self.shield_bar_length = 400
@@ -99,11 +101,11 @@ class Hero(Entity):
         pygame.draw.rect(screen, (0, 0, 255), (45, 60, self.shield/self.shield_ratio, 25))
         pygame.draw.rect(screen, (0, 0, 0), (45 ,60, self.shield_bar_length,25), 2)
 
+
     def update(self, mobs, obstacles):
         self.basic_health()
         if self.shield > 0:
             self.basic_shield()
-        super().update()
         self.check_obstacle_collision(obstacles)
         self.check_rage_end()
         self.rotate_to_mouse()  # Add this line to rotate the player to face the mouse
@@ -148,4 +150,12 @@ class Hero(Entity):
             self.rect.y -= self.speed
         if key[pygame.K_DOWN] or key[pygame.K_s]:
             self.rect.y += self.speed
+        if self.rect.x < 50:
+            self.rect.x = 50
+        if self.rect.y < 0:
+            self.rect.y = 0
+        if self.rect.x > HAUTEUR - self.rect.width - 50:
+            self.rect.x = HAUTEUR - self.rect.width -50
+        if self.rect.y > LARGEUR - self.rect.height - 50:
+            self.rect.y = LARGEUR - self.rect.height - 50
 

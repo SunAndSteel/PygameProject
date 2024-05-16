@@ -13,6 +13,7 @@ pygame.init()
 screen = pygame.display.set_mode((HAUTEUR, LARGEUR))
 clock = pygame.time.Clock()
 
+mort = False
 
 class Mob(Boss):
     def __init__(self, image, x, y, target,Id=2 ,path='Entitys/Mobs/Normal_Mobs/RandomMob.json'):
@@ -41,6 +42,9 @@ class Mob(Boss):
         except Exception as e:
             print(f"Erreur lors du chargement des données depuis le fichier JSON: {e}")
 
+    def constant_pos(self):
+        return [self.rect.x, self.rect.y]
+
     def hurt(self, damage, mobs):
         self.health -= damage
         print(f"Mob health: {self.health}")
@@ -58,12 +62,16 @@ class Mob(Boss):
             self.last_attack_time = current_time
 
     def kill(self, mobs):
+        from main import dropped_weapons
         random_number = 2
         if random_number == 2:
             second_random_number = 0
             if second_random_number == 0:
                 from Weapons import Gun
-                Gun.draw_gun(screen, self.rect.x, self.rect.y)
+                weapon = Gun()
+                weapon.pos = [self.rect.x, self.rect.y]  # Set the position of the weapon
+                weapon.image_path = "assets/Graphics/Weapons/gun.png"  # Set the image path of the weapon
+                dropped_weapons.append(weapon)  # Add the weapon to the list of dropped
                 print("j'ai dessiné un gun")
             elif second_random_number == 1:
                 pass
@@ -72,6 +80,7 @@ class Mob(Boss):
         if self in mobs:
             mobs.remove(self)
         super().kill()  # Call the kill method of the superclass
+        return self.rect.x, self.rect.y  # Return the position of the mob when it is killed
 
     def update(self):
         if self.Id == 2 or self.Id == 3:
@@ -90,6 +99,11 @@ class Mob(Boss):
 
     def draw(self, surface):
         surface.blit(self.image, self.rect)
+
+    def is_dead(self):
+        global mort
+        if self.health <= 0:
+            mort = True
 
     def show_informations(self):
         super().show_informations()

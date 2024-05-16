@@ -17,6 +17,11 @@ class Weapon:
     def fire(self, hero, mobs):
         pass
 
+    def draw(self, screen, x, y , image_path):
+        image = pygame.image.load(image_path)  # Load the image
+        image = pygame.transform.scale(image, (30, 30))  # Scale the image
+        screen.blit(image, (x,y))
+
 class Knife(Weapon):
     def __init__(self):
         super().__init__(damage=20, cooldown=1000)  # Knife deals 20 damage and has a cooldown of 1 second
@@ -58,10 +63,6 @@ class Gun(Weapon):
             bullet = Bullet(hero.rect.center, mouse_pos, self.damage)
             self.bullets.append(bullet)
             self.last_fire_time = pygame.time.get_ticks()
-
-    def draw_gun(self, x, y):
-        pygame.transform.scale(pygame.image.load("assets/Graphics/Weapons/gun.png"), (15, 15))
-        screen.blit(pygame.image.load("assets/Graphics/Weapons/gun.png"), (x,y))
 
     def update(self, screen, mobs):  # Add screen as a parameter
         for bullet in self.bullets:

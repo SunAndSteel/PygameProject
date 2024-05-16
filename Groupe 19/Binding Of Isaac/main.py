@@ -1,17 +1,19 @@
 import pygame
 from sys import exit
 from Menu_button import Button
-import time
 from Hero import Hero
 from Mob_spawn import add_mob, mobs, obstacles, add_boss, add_obstacle
 from Weapons import *
 from Obstacle import *
 from Boss import *
+from Mob import *
 
 pygame.init()
+
 music = pygame.mixer.music.load("assets/Sound/game track.mp3")
 pygame.mixer.music.play(-1)
 pygame.mixer.music.set_volume(0.1)
+
 width, height = 1280, 720
 
 screen = pygame.display.set_mode((width, height))
@@ -20,7 +22,7 @@ pygame.display.set_caption("Binding of Isaac")
 fps = pygame.time.Clock()
 pause = False
 font = pygame.font.Font('assets/font/Hammer God Font DEMO.ttf', 36)
-projectiles = pygame.sprite.Group()
+
 
 BG = pygame.image.load("assets/Graphics/background.png")
 BG = pygame.transform.scale(BG, (width, height))
@@ -28,6 +30,10 @@ BG = pygame.transform.scale(BG, (width, height))
 hero = Hero("Entitys/Mobs/Hero/hero.json")
 all_sprites = pygame.sprite.Group()
 all_sprites.add(hero)
+projectiles = pygame.sprite.Group()
+
+dropped_weapons = []  # Initialize the dropped_weapons list here
+
 
 
 def pause_menu(screen, paused):
@@ -141,17 +147,27 @@ def game(screen, pause=False):
 
         screen.blit(BG, (0, 0))
 
-        hero.attack(mobs)
-        hero.update(mobs, obstacles)
-
         for mob in mobs:
             mob.attack(hero, projectiles)
             mob.update()
             mob.draw(screen)
 
-            if isinstance(mob, Boss):
-                mob.attack(hero, projectiles)
-                mob.update()
+            from Mob import mort
+            if mort:  # Replace this with your condition to check if the mob is dead
+                pos_x, pos_y = mob.kill(dropped_weapons)  # Get the position of the killed mob
+                from Weapons import Gun
+                print('hell yeah')
+                weapon = Gun()
+                weapon.pos = [pos_x, pos_y]  # Set the position of the weapon
+                weapon.image_path = "assets/Graphics/Weapons/gun.png"  # Set the image path of the weapon
+                dropped_weapons.append(weapon)  # Add the weapon to the list of dropped weapons
+
+                if isinstance(mob, Boss):
+                    mob.attack(hero, projectiles)
+                    mob.update()
+
+        hero.attack(mobs)
+        hero.update(mobs, obstacles)
 
         projectiles.update()
 
@@ -174,7 +190,7 @@ def game(screen, pause=False):
         for projectiled in projectiles:
             projectiled.draw(screen)
 
-        if isinstance(hero.weapon, Gun):
+        if hero.weapon == gun:
             hero.weapon.update(screen, mobs)
 
         hero.draw(screen)
@@ -183,6 +199,7 @@ def game(screen, pause=False):
 
         if hero.shield > 0:
             screen.blit(hero.shield_image, (0, 50))
+
 
         pygame.display.update()
         fps.tick(120)
