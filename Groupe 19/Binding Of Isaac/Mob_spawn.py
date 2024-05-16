@@ -1,19 +1,16 @@
 import pygame
-from random import randint, randrange, choice
+from random import randint, choice
 from Mob import Mob
 from Obstacle import *
 from Boss import Boss
-
 
 pygame.init()
 
 # Add a timer for adding mobs
 
-
 mobs = []
 obstacles = []
 screen = pygame.display.set_mode((1280, 720))
-
 
 mini_hitter = pygame.image.load("assets/Graphics/Mobs/minihitler.png").convert_alpha()
 mini_hitter = pygame.transform.scale(mini_hitter, (100, 100))
@@ -23,7 +20,7 @@ Gazeur = pygame.image.load("assets/Graphics/Mobs/gazeur.png").convert_alpha()
 Gazeur = pygame.transform.scale(Gazeur, (100, 100))
 
 unheal = pygame.image.load("assets/Graphics/malus/poisonheal.png").convert_alpha()
-unheal = pygame.transform.scale(unheal, (30,30))
+unheal = pygame.transform.scale(unheal, (30, 30))
 heal = pygame.image.load("assets/Graphics/bonus/healingpotion.png").convert_alpha()
 heal = pygame.transform.scale(heal, (30, 30))
 speed = pygame.image.load("assets/Graphics/bonus/speedpotion.png").convert_alpha()
@@ -38,11 +35,9 @@ Caporal_boss = pygame.transform.scale(Caporal_boss, (200, 200))
 Hitler_boss = pygame.image.load("assets/Graphics/Boss/hitler.png").convert_alpha()
 Hitler_boss = pygame.transform.scale(Hitler_boss, (200, 200))
 
-
 def add_obstacle(hero, max_obstacles=2):
     global obstacles
     min_distance_from_hero = 200  # Minimum distance from hero
-
 
     obstacle_images_effects = [(heal, 'heal'), (speed, 'speed'), (shield, 'shield'), (Rage, 'rage'), (unheal, 'unheal')]
     obstacle_image, obstacle_effect = choice(obstacle_images_effects)
@@ -51,7 +46,7 @@ def add_obstacle(hero, max_obstacles=2):
     if ((obstacle_x - hero.rect.x) ** 2 + (obstacle_y - hero.rect.y) ** 2) ** 0.5 < min_distance_from_hero:
         return
 
-    obstacle = Obstacle(obstacle_image, obstacle_x, obstacle_y,obstacle_effect )
+    obstacle = Obstacle(obstacle_image, obstacle_x, obstacle_y, obstacle_effect)
 
     if (any(obstacle.intersects(other_obstacle) for other_obstacle in obstacles) or any(obstacle.intersects(other_mob)
                                                                                         for other_mob in mobs) or
@@ -65,7 +60,7 @@ def add_mob(hero):
     global mobs
     from main import all_sprites
 
-    entry_point = (1280,400)
+    entry_point = (1280, 400)
     min_distance_from_entry = 200  # Minimum distance from entry point
     min_distance_from_hero = 200  # Minimum distance from hero
 
@@ -88,29 +83,25 @@ def add_mob(hero):
     if randomiseur == 1:
         mob = Mob(mob_image_melee, mob_x, mob_y, hero, 1)
     elif randomiseur == 2:
-        mob = Mob(mob_image_distance_gazeur, mob_x, mob_y, hero,2)
+        mob = Mob(mob_image_distance_gazeur, mob_x, mob_y, hero, 2)
     elif randomiseur == 3:
-        mob = Mob(mob_image_distance_soldier, mob_x, mob_y, hero,3)
+        mob = Mob(mob_image_distance_soldier, mob_x, mob_y, hero, 3)
 
     if (any(mob.intersects(other_mob) for other_mob in mobs) or any(mob.intersects(other_obstacle)
-                                                                   for other_obstacle in obstacles) or
+                                                                    for other_obstacle in obstacles) or
             mob.rect.right >= 1280 or mob.rect.bottom >= 720 or mob.rect.left < 0 or mob.rect.top < 0):
         return
 
     mobs.append(mob)
     mob.draw(screen)  # Draw the mob on the screen
     all_sprites.add(mob)
-def add_boss(hero):
-    global mobs
 
-    boss = choice([Caporal_boss, Hitler_boss])
+def add_boss(hero, mobs):
+    boss_image = choice([Caporal_boss, Hitler_boss])
     boss_x, boss_y = randint(0, screen.get_width()), randint(0, screen.get_height())
 
-    boss = Boss(boss, boss_x, boss_y, hero)
+    boss = Boss(boss_image, boss_x, boss_y, hero)
 
     print("Boss added")
-    mobs.append(boss)
+    mobs.add(boss)
     boss.draw(screen)
-
-
-
