@@ -22,7 +22,7 @@ pygame.display.set_caption("Menu")
 surface = pygame.Surface((width, height), pygame.SRCALPHA)
 
 # Chargement de l'image de fond
-BG = pygame.image.load("assets/Graphics/image_jeussss.png")
+BG = pygame.image.load("assets/Graphics/image_jeu.png")
 BG = pygame.transform.scale(BG, (width, height))
 
 music_files = ["assets/sound/Menu song.mp3","assets/sound/Menu song.mp3","assets/sound/Menu song.mp3", "assets/sound/Menu song 2.mp3"]
