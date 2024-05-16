@@ -18,12 +18,12 @@ class Mob(Boss):
     def __init__(self, image, x, y, target,Id=2 ,path='Entitys/Mobs/Normal_Mobs/RandomMob.json'):
         super().__init__(image, x, y, target, path)
         self.health = 100
-        self.deplacement = "right-left"
         self.level = 50
         self.Id = Id
         self.load_mob_data(path)
-        self.target = target  # Le joueur que le mob doit poursuivre
-        self.attack_range = 30  # Define the attack range of the mob
+        self.x = x
+        self.y = y
+        self.target = target
         self.image = image
         self.rect = self.image.get_rect(topleft=(x, y))
         self.last_attack_time = pygame.time.get_ticks()  # Store the time of the last attack
@@ -33,7 +33,6 @@ class Mob(Boss):
             with open(path, 'r') as file:
                 mob_data = json.load(file)
                 self.health = mob_data.get("health", self.health)
-                self.deplacement = mob_data.get("deplacement", self.deplacement)
                 self.level = mob_data.get("level", self.level)
         except FileNotFoundError:
             print(f"Erreur : fichier JSON introuvable - {path}")
@@ -48,30 +47,15 @@ class Mob(Boss):
         if self.health <= 0:
             self.kill(mobs)  # Remove the mob if its health reaches 0
 
-    def move(self):
-        if self.Id == 1:
-            dx, dy = self.target.rect.x - self.rect.x, self.target.rect.y - self.rect.y
-            dist = sqrt(dx ** 2 + dy ** 2)
-
-            # Normalize the direction vector (dx, dy) -> (dx/dist, dy/dist)
-            if dist > 0:
-                dx, dy = dx / dist, dy / dist
-
-            # Update the boss's position
-            self.rect.x += dx * self.speed
-            self.rect.y += dy * self.speed
-
     def shoot(self):
         from main import projectiles
-        if self.Id == 2:
-            current_time = pygame.time.get_ticks()
-            if current_time - self.last_attack_time >= 1500:
-                # Create a new projectile
-                projectile = Projectile(self.rect.center, self.target.rect.center)
-                # Add the projectile to the projectiles group
-                projectiles.add(projectile)
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_attack_time >= 3000:
+            # Create a new projectile
+            projectile = Projectile(self.rect.center, self.target.rect.center , 'assets/Graphics/Projectiles/gaz.png' if self.Id == 2 else 'assets/Graphics/Projectiles/gammedcross.png')
+            # Add the projectile to the projectiles group
+            projectiles.add(projectile)
             self.last_attack_time = current_time
-
 
     def kill(self, mobs):
         if self in mobs:
@@ -79,21 +63,16 @@ class Mob(Boss):
         super().kill()  # Call the kill method of the superclass
 
     def update(self):
-        self.move()
-        self.shoot()
+        if self.Id == 2 or self.Id == 3:
+            self.shoot()
+        if self.Id == 1:
+            if self.rect.colliderect(self.target.rect):
+                current_time = pygame.time.get_ticks()
+                if current_time - self.last_attack_time >= 1000:
+                    self.target.hurt(10)
+                    self.last_attack_time = current_time
+
         super().update()
-
-    def attack(self, target, projectiles):
-        current_time = pygame.time.get_ticks()
-        if self.Id == 2:
-            if current_time - self.last_attack_time >= 1500:  # Check if 1.5 seconds have passed since the last attack
-                # Create a new projectile
-                projectile = Projectile(self.rect.center, target.rect.center)  # Pass the target object itself
-                # Add the projectile to the projectiles grou
-                print("ZAAAAAAAAAAAAAAAAAAAAAAAA")
-                projectiles.add(projectile)
-            self.last_attack_time = current_time
-
 
     def intersects(self, other):
         return self.rect.colliderect(other.rect)

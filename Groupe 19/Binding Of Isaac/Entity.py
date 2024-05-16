@@ -1,7 +1,7 @@
 import os
 import pygame
 import json
-
+import random
 from Entitys.PlayerInfo import PlayerInfo, PlayerInfoSprite
 
 HAUTEUR, LARGEUR = 1280 , 720
@@ -23,18 +23,22 @@ class Entity(pygame.sprite.Sprite):
         self.path = path
         self.show_player_information = False
         self.load_from_json(path)
+        self.mouvements = random.choice(["up-down", "down-up", "left-right", "right-left", "carré", "losange", "diagonale"])
+
 
     def update(self):
-        if self.rect is not None:
+        super().update()
+        if self.rect.x < 50:
+            self.rect.x = 50
+        if self.rect.y < 0:
+            self.rect.y = 0
+        if self.rect.x > HAUTEUR - self.rect.width - 50:
+            self.rect.x = HAUTEUR - self.rect.width -50
+        if self.rect.y > LARGEUR - self.rect.height - 50:
+            self.rect.y = LARGEUR - self.rect.height - 50
 
-            if self.rect.x < 50:
-                self.rect.x = 50
-            if self.rect.y < 0:
-                self.rect.y = 0
-            if self.rect.x > HAUTEUR - self.rect.width - 50:
-                self.rect.x = HAUTEUR - self.rect.width -50
-            if self.rect.y > LARGEUR - self.rect.height - 50:
-                self.rect.y = LARGEUR - self.rect.height - 50
+
+
 
     def show_informations(self):
         self.show_player_information = not self.show_player_information

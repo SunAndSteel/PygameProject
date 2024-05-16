@@ -3,7 +3,7 @@
   "bonus": [ "Strength", "Agility" ],
   "weapons": [ "Sword", "Bow" ],
   "shield": "Wooden Shield",
-  "image_path": "Entitys/ressources_entity_hero/player-princess.png",
+  "image_path": "",
   "name": "Amerindien",
   "health": 100,
   "Level": 1,

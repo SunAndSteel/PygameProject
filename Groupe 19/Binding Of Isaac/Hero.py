@@ -20,18 +20,25 @@ class Hero(Entity):
         self.normal_sword_range = 150  # Define the range of the sword
         self.knife_range = self.normal_knife_range  # Set the initial range of the knife
         self.sword_range = self.normal_sword_range
-        self.health = 100  # Define the health of the hero
-        self.max_health = 100  # Define the maximum health of the hero
+        self.health = 200
+        self.max_health = 200
+        self.health_bar_lenght = 400
+        self.health_ratio = self.max_health / self.health_bar_lenght
         self.last_attack_time = pygame.time.get_ticks()  # Store the time of the last attack
         self.weapon = Gun()  # Define the weapon of the hero
         self.shield = 0  # Define the shield of the hero
         self.max_shield = 100
+        self.shield_bar_length = 400
+        self.shield_ratio = self.max_shield / self.shield_bar_length
         self.shield_state = False  # Define the state of the shield
         # Load the crosshair image
         self.crosshair_image = pygame.image.load('assets/Graphics/crosshair.png').convert_alpha()
         self.crosshair_image = pygame.transform.scale(self.crosshair_image, (30, 30))  # Scale the image
         self.crosshair_pos = [0, 0]  # Initialize the position of the crosshair
+        self.heart_image = pygame.transform.scale((pygame.image.load("assets/Graphics/HUD/HUD_heart.png")), (40, 40))
+        self.shield_image = pygame.transform.scale((pygame.image.load("assets/Graphics/HUD/HUD_shield.png")), (50, 50))
         self.in_boss_room = False
+        self.mouvements = "perso"
 
 
 
@@ -41,7 +48,6 @@ class Hero(Entity):
                 hero_data = json.load(file)
                 self.speed = hero_data.get("speed", 2.5)
                 self.bonus = hero_data.get("bonus", [])
-                self.weapons = hero_data.get("weapons", [])
                 self.shield = hero_data.get("shield", None)
                 self.image_path = hero_data.get("image_path")
                 if self.image_path:
@@ -53,7 +59,6 @@ class Hero(Entity):
             print(f"Error loading hero data from JSON: {e}")
 
     def attack(self, mobs):
-        from Mob import Mob
         mouse_pressed = pygame.mouse.get_pressed()
         if mouse_pressed[0]:  # If left mouse button is clicked
             current_time = pygame.time.get_ticks()
@@ -63,9 +68,14 @@ class Hero(Entity):
                         dist = sqrt((self.rect.x - mob.rect.x) ** 2 + (self.rect.y - mob.rect.y) ** 2)
                         if dist <= self.knife_range:
                             mob.hurt(20, mobs)  # Call the hurt method of the Mob class
+                elif isinstance(self.weapon, Sword):
+                    for mob in mobs:
+                        dist = sqrt((self.rect.x - mob.rect.x) ** 2 + (self.rect.y - mob.rect.y) ** 2)
+                        if dist <= self.sword_range:
+                            mob.hurt(self.weapon.damage, mobs)  # Call the hurt method of the Mob class
                 elif isinstance(self.weapon, Gun):
                     self.weapon.fire(self, mobs)
-                self.last_attack_time = current_time  # Update the last attack time
+                self.last_attack_time = current_time  # Update the l
 
     def hurt(self, damage):
         if self.shield_state and self.shield > 0:
@@ -78,7 +88,21 @@ class Hero(Entity):
             if self.health <= 0:
                 print("Le joueur est mort")
 
+    def basic_health(self):
+        from main import screen
+        pygame.draw.rect(screen, (255, 0, 0), (45, 10, self.health/self.health_ratio, 25))
+        pygame.draw.rect(screen, (0, 0, 0), (45 ,10, self.health_bar_lenght,25), 2)
+
+
+    def basic_shield(self):
+        from main import screen
+        pygame.draw.rect(screen, (0, 0, 255), (45, 60, self.shield/self.shield_ratio, 25))
+        pygame.draw.rect(screen, (0, 0, 0), (45 ,60, self.shield_bar_length,25), 2)
+
     def update(self, mobs, obstacles):
+        self.basic_health()
+        if self.shield > 0:
+            self.basic_shield()
         super().update()
         self.check_obstacle_collision(obstacles)
         self.check_rage_end()

@@ -4,14 +4,14 @@ pygame.init()
 
 
 class Projectile(pygame.sprite.Sprite):
-    def __init__(self, start_pos, target_pos):
+    def __init__(self, start_pos, target_pos,image):
         super().__init__()
-        image = pygame.image.load('assets/Graphics/Projectiles/gaz.png').convert_alpha()
+        image = pygame.image.load(image).convert_alpha()
         self.image = pygame.transform.scale(image, (50, 50))
         self.rect = self.image.get_rect(center=start_pos)
         self.direction = pygame.Vector2(target_pos) - self.rect.center  # Calculate the direction to the target
         self.direction.normalize_ip()  # Normalize the direction vector
-        self.speed = 5
+        self.speed = 10
 
     def update(self):
         self.rect.center += self.direction * self.speed  # Move in the stored direction

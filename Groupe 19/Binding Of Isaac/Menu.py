@@ -49,7 +49,7 @@ def play():
     """
     while True:
         from main import game
-        game(SCREEN, surface, get_font(36))
+        game(SCREEN, get_font(36))
 
 
 # Fonction pour l'écran des options
@@ -122,7 +122,7 @@ def main_menu():
 
         MENU_MOUSE_POS = pygame.mouse.get_pos()
 
-        MENU_TEXT = get_font(100).render("MAIN MENU", True, "#b68f40")
+        MENU_TEXT = pygame.image.load("assets/Graphics/Menu.png")
         MENU_RECT = MENU_TEXT.get_rect(center=(640, 100))
 
         PLAY_BUTTON = Button(image=None, pos=(640, 250),

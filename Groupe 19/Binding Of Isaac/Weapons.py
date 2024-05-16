@@ -18,6 +18,10 @@ class Knife(Weapon):
     def __init__(self):
         super().__init__(damage=20, cooldown=1000)  # Knife deals 20 damage and has a cooldown of 1 second
 
+class Sword(Weapon):
+    def __init__(self):
+        super().__init__(damage=30, cooldown=1500)  # Sword deals 30 damage and has a cooldown of 1.5 seconds
+
 class Bullet:
     def __init__(self, start_pos, target_pos, damage):
         self.pos = list(start_pos)

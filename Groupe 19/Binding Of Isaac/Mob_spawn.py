@@ -4,6 +4,7 @@ from Mob import Mob
 from Obstacle import *
 from Boss import Boss
 
+
 pygame.init()
 
 # Add a timer for adding mobs
@@ -54,25 +55,27 @@ def add_obstacle(hero, max_obstacles=2):
 
     if (any(obstacle.intersects(other_obstacle) for other_obstacle in obstacles) or any(obstacle.intersects(other_mob)
                                                                                         for other_mob in mobs) or
-            obstacle.rect.right >= 1280 or obstacle.rect.bottom >= 720 or obstacle.rect.left < 0 or obstacle.rect.top < 0):
+            obstacle.rect.right >= 1230 or obstacle.rect.bottom >= 670 or obstacle.rect.left < 50 or obstacle.rect.top < 50):
         return
 
     obstacles.append(obstacle)
     obstacle.draw(screen)  # Draw the obstacle on the screen
 
-
 def add_mob(hero):
     global mobs
+    from main import all_sprites
 
     entry_point = (1280,400)
-    min_distance_from_entry = 500  # Minimum distance from entry point
+    min_distance_from_entry = 200  # Minimum distance from entry point
     min_distance_from_hero = 200  # Minimum distance from hero
 
-    randomiseur = randint(1, 2)
+    randomiseur = randint(1, 3)
     if randomiseur == 1:
         mob_image_melee = mini_hitter
     elif randomiseur == 2:
-        mob_image_distance = choice([Soldier, Gazeur])
+        mob_image_distance_gazeur = Gazeur
+    elif randomiseur == 3:
+        mob_image_distance_soldier = Soldier
     mob_x, mob_y = randint(0, screen.get_width()), randint(0, screen.get_height())
 
     # Check the distance from the hero
@@ -84,8 +87,10 @@ def add_mob(hero):
 
     if randomiseur == 1:
         mob = Mob(mob_image_melee, mob_x, mob_y, hero, 1)
-    else:
-        mob = Mob(mob_image_distance, mob_x, mob_y, hero)
+    elif randomiseur == 2:
+        mob = Mob(mob_image_distance_gazeur, mob_x, mob_y, hero,2)
+    elif randomiseur == 3:
+        mob = Mob(mob_image_distance_soldier, mob_x, mob_y, hero,3)
 
     if (any(mob.intersects(other_mob) for other_mob in mobs) or any(mob.intersects(other_obstacle)
                                                                    for other_obstacle in obstacles) or
@@ -94,7 +99,7 @@ def add_mob(hero):
 
     mobs.append(mob)
     mob.draw(screen)  # Draw the mob on the screen
-
+    all_sprites.add(mob)
 def add_boss(hero):
     global mobs
 
