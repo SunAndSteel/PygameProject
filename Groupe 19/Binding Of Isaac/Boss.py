@@ -13,11 +13,52 @@ class Fireball(pygame.sprite.Sprite):
     def __init__(self, start_pos, target_pos):
         super().__init__()
         image = pygame.image.load('assets/Graphics/Projectiles/fireball.png')  # Load the fireball image
-        self.image = pygame.transform.scale(image, (50, 50))
-        self.rect = self.image.get_rect(center=start_pos)
-        self.direction = pygame.Vector2(target_pos) - self.rect.center  # Calculate the direction to the target
-        self.direction.normalize_ip()  # Normalize the direction vector
-        self.speed = 8
+        self.__image = pygame.transform.scale(image, (50, 50))
+        self.__rect = self.__image.get_rect(center=start_pos)
+        self.__direction = pygame.Vector2(target_pos) - self.__rect.center  # Calculate the direction to the target
+        self.__direction.normalize_ip()  # Normalize the direction vector
+        self.__speed = 8
+
+    """
+    GETTERS AND SETTERS FOR Fireball()'s attributes
+    """
+    
+
+    @property
+    def image(self):
+        return self.__image
+    
+    @image.setter
+    def image(self, value):
+        self.__image = value
+        
+    @property
+    def rect(self):
+        return self.__rect
+    
+    @rect.setter
+    def rect(self, value):
+        self.__rect = value
+
+    @property
+    def direction(self):
+        return self.__direction
+    
+    @direction.setter
+    def direction(self, value):
+        self.__direction = value
+
+    @property
+    def speed(self):
+        return self.__speed
+    
+    @speed.setter
+    def speed(self, value):
+        self.__speed = value
+
+    """
+#-------------------------------------#
+    """
 
     def update(self):
         self.rect.center += self.direction * self.speed  # Move in the stored direction
@@ -31,11 +72,52 @@ class FireWall(pygame.sprite.Sprite):
     def __init__(self, start_pos, target_pos):
         super().__init__()
         image = pygame.image.load('assets/Graphics/Projectiles/firewall.png')  # Load the firewall image
-        self.image = pygame.transform.scale(image, (100, 150))
-        self.rect = self.image.get_rect(center=start_pos)
-        self.direction = pygame.Vector2(target_pos) - self.rect.center  # Calculate the direction to the target
-        self.direction.normalize_ip()  # Normalize the direction vector
-        self.speed = 7
+        self.__image = pygame.transform.scale(image, (100, 150))
+        self.__rect = self.image.get_rect(center=start_pos)
+        self.__direction = pygame.Vector2(target_pos) - self.rect.center  # Calculate the direction to the target
+        self.__direction.normalize_ip()  # Normalize the direction vector
+        self.__speed = 7
+
+
+    """
+    GETTERS AND SETTERS FOR FireWall()'s attributes
+    """
+
+    @property
+    def image(self):
+        return self.__image
+    
+    @image.setter
+    def image(self, value):
+        self.__image = value
+        
+    @property
+    def rect(self):
+        return self.__rect
+    
+    @rect.setter
+    def rect(self, value):
+        self.__rect = value
+
+    @property
+    def direction(self):
+        return self.__direction
+    
+    @direction.setter
+    def direction(self, value):
+        self.__direction = value
+
+    @property
+    def speed(self):
+        return self.__speed
+    
+    @speed.setter
+    def speed(self, value):
+        self.__speed = value
+
+    """
+#-------------------------------------#
+    """
 
     def update(self):
         self.rect.center += self.direction * self.speed  # Move in the stored direction
@@ -48,26 +130,178 @@ class FireWall(pygame.sprite.Sprite):
 class Boss(Entity):
     def __init__(self, image, x, y, hero, path = "Entitys/Mobs/Boss/boss.json"):
         super().__init__(path)
-        self.fury_mode = False
-        self.resistance = 0
-        self.level = 150
-        self.load_boss_data(path)
-        self.image = image
-        self.rect = self.image.get_rect(topleft=(x, y))
-        self.last_attack_time = pygame.time.get_ticks()  # Store the time of the last attack
-        self.x = x
-        self.y = y
-        self.target = hero
-        self.Id = 4
-        self.health = 1000
-        self.last_spawn_time = pygame.time.get_ticks()
-        self.movement_timer = 0
-        self.change_movement_time = 5000
-        self.change_movement()
+        self.__fury_mode = False
+        self.__resistance = 0
+        self.__level = 150
+        self.__Id = 4
+        self.__health = 1000
+        self.__last_spawn_time = pygame.time.get_ticks()
+        self.__movement_timer = 0
+        self.__change_movement_time = 5000
+        self.__load_boss_data(path)
+        self.__image = image
+        self.__rect = self.image.get_rect(topleft=(x, y))
+        self.__last_attack_time = pygame.time.get_ticks()  # Store the time of the last attack
+        self.__x = x
+        self.__y = y
+        self.__target = hero
 
-    def change_movement(self):
-        possible_movements = ["up-down", "down-up", "left-right", "right-left", "carré", "losange", "diagonale"]
-        self.mouvements = random.choice(possible_movements)
+    """
+    GETTER AND SETTERS FOR Boss()'s attributes
+    """
+
+    @property
+    def fury_mode(self):
+        return self.__fury_mode
+    
+    @fury_mode.setter
+    def fury_mode(self, value):
+        self.__fury_mode = value
+
+    @property
+    def resistance(self):
+        return self.__resistance
+    
+    @resistance.setter
+    def resistance(self, value):
+        self.__resistance = value
+
+    @property
+    def level(self):
+        return self.__level
+    
+    @level.setter
+    def level(self, value):
+        self.__level = value
+
+    @property
+    def Id(self):
+        return self.__Id
+    
+    @Id.setter
+    def Id(self, value):
+        self.__Id = value
+
+    @property
+    def health(self):
+        return self.__health
+    
+    @health.setter
+    def health(self, value):
+        self.__health = value
+
+    @property
+    def last_spawn_time(self):
+        return self.__last_spawn_time
+    
+    @last_spawn_time.setter
+    def last_spawn_time(self, value):
+        self.__last_spawn_time = value
+
+    @property
+    def movement_timer(self):
+        return self.__movement_timer
+    
+    @movement_timer.setter
+    def movement_timer(self, value):
+        self.__movement_timer = value
+
+    @property
+    def change_movement_time(self):
+        return self.__change_movement_time
+    
+    @change_movement_time.setter
+    def change_movement_time(self, value):
+        self.__change_movement_time = value
+
+    @property
+    def last_attack_time(self):
+        return self.__last_attack_time
+    
+    @last_attack_time.setter
+    def last_attack_time(self, value):
+        self.__last_attack_time = value
+
+    @property
+    def rect(self):
+        return self.__rect
+    
+    @rect.setter
+    def rect(self, value):
+        self.__rect = value
+
+    @property
+    def image(self):
+        return self.__image
+    
+    @image.setter
+    def image(self, value):
+        self.__image = value
+
+    @property
+    def x(self):
+        return self.__x
+    
+    @x.setter
+    def x(self, value):
+        self.__x = value
+
+    @property
+    def y(self):
+        return self.__y
+    
+    @y.setter
+    def y(self, value):
+        self.__y = value
+
+    @property
+    def target(self):
+        return self.__target
+    
+    @target.setter
+    def target(self, value):
+        self.__target = value
+
+
+    """
+#-------------------------------------#
+    """
+
+
+    def __load_boss_data(self, path):
+        try:
+            with open(path, 'r') as file:
+                boss_data = json.load(file)
+                self.fury_mode = boss_data.get("fury_mode", self.fury_mode)
+                self.resistance = boss_data.get("resistance", self.resistance)
+                self.level = boss_data.get("level", self.level)
+                self.Id = boss_data.get("Id", self.Id)
+                self.health = boss_data.get("health", self.health)
+        except FileNotFoundError:
+            print(f"Erreur : fichier JSON introuvable - {path}")
+        except json.JSONDecodeError:
+            print(f"Erreur : fichier JSON malformé - {path}")
+        except Exception as e:
+            print(f"Erreur lors du chargement des données depuis le fichier JSON: {e}")
+
+    def update(self):
+        super().update()
+        if self.movement_timer < self.change_movement_time:
+            self.movement_timer += pygame.time.get_ticks()
+        else:
+            self.change_movement()
+            self.movement_timer = 0
+
+        if self.mouvements in ["up-down", "down-up"]:
+            self.move_up_down()
+        elif self.mouvements in ["left-right", "right-left"]:
+            self.move_left_right()
+        elif self.mouvements == "carré":
+            self.move_square()
+        elif self.mouvements == "losange":
+            self.move_losange()
+        elif self.mouvements == "diagonale":
+            self.move_diagonal()
 
     def move_up_down(self):
         self.rect.y += self.speed
@@ -126,69 +360,6 @@ class Boss(Entity):
         elif self.rect.bottom > HAUTEUR:
             self.rect.bottom = HAUTEUR
             self.speed = -self.speed
-
-    def update(self):
-        super().update()
-        if self.movement_timer < self.change_movement_time:
-            self.movement_timer += pygame.time.get_ticks()
-        else:
-            self.change_movement()
-            self.movement_timer = 0
-
-        if self.mouvements in ["up-down", "down-up"]:
-            self.move_up_down()
-        elif self.mouvements in ["left-right", "right-left"]:
-            self.move_left_right()
-        elif self.mouvements == "carré":
-            self.move_square()
-        elif self.mouvements == "losange":
-            self.move_losange()
-        elif self.mouvements == "diagonale":
-            self.move_diagonal()
-
-    def load_boss_data(self, path):
-        try:
-            with open(path, 'r') as file:
-                boss_data = json.load(file)
-                self.fury_mode = boss_data.get("fury_mode", self.fury_mode)
-                self.resistance = boss_data.get("resistance", self.resistance)
-                self.level = boss_data.get("level", self.level)
-                self.Id = boss_data.get("Id", self.Id)
-                self.health = boss_data.get("health", self.health)
-        except FileNotFoundError:
-            print(f"Erreur : fichier JSON introuvable - {path}")
-        except json.JSONDecodeError:
-            print(f"Erreur : fichier JSON malformé - {path}")
-        except Exception as e:
-            print(f"Erreur lors du chargement des données depuis le fichier JSON: {e}")
-
-    def draw(self, screen):
-        screen.blit(self.image, self.rect)
-
-    def update(self):
-        self.spawn_obstacles()
-
-        super().update()
-
-    def show_informations(self):
-        super().show_informations()
-        if self.show_player_information:
-            info_surface = pygame.Surface((200, 50))
-            info_surface.fill((0, 0, 0))
-            info = [
-                f"Nom: {self.name}",
-                f"Niveau: {self.level}"
-            ]
-            font = pygame.font.SysFont("Arial", 20)
-            # Parcourt la liste des textes avec leur index Ce n'est pas mon code bien sur mais le fruit de recherches approfondie sur plusieurs topics pygame
-            for i, text in enumerate(info):
-                # Rend le texte avec une police spécifique et une couleur blanche
-                text_render = font.render(text, True, (255, 255, 255))
-                # Place le texte rendu verticalement sur la surface
-                info_surface.blit(text_render, (10, 10 + i * 20))
-            # Affiche la surface d'informations au-dessus du personnage dans le jeu
-            screen.blit(info_surface, (self.rect.centerx - info_surface.get_width() // 2, self.rect.top - 30))
-
 
     def attack(self, target, projectiles=None):
         if self.Id == 4:
