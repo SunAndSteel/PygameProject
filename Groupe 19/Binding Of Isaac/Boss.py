@@ -64,6 +64,7 @@ class Boss(Entity):
         self.last_spawn_time = pygame.time.get_ticks()
         self.movement_timer = 0
         self.change_movement_time = 5000
+        self.die_song = pygame.mixer.Sound('assets/Sound/nein.mp3')
 
     def update(self):
         self.spawn_obstacles()
@@ -94,6 +95,7 @@ class Boss(Entity):
             current_time = pygame.time.get_ticks()
             if current_time - self.last_attack_time >= (500 if self.fury_mode else 1500):
                 attack_type = random.choice(['fireball', 'firewall'])
+                self.die_song.play()
                 if attack_type == 'fireball':
                     fireball = Fireball(self.rect.center, target.rect.center)
                     projectiles.add(fireball)

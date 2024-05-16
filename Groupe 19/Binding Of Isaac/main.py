@@ -36,11 +36,6 @@ level = 1
 old_level = level
 etage = 1
 
-rooms = {"room1": {"mobs": pygame.sprite.Group(), "obstacles": pygame.sprite.Group()}}
-current_room = "room1"
-next_room_position = None
-exit_door = None
-
 def pause_menu(screen, paused):
     resume_button = Button(image=None, pos=(width // 2, height // 2 - 100), text_input='Press r to Resume', font=font, base_color=(255, 255, 255), hovering_color='Green')
     save_button = Button(image=None, pos=(width // 2, height // 2), text_input='Press s to Save', font=font, base_color=(255, 255, 255), hovering_color='Green')
@@ -106,32 +101,33 @@ def main_menu(screen):
         fps.tick(60)
 
 def game(screen, pause=False):
-    global level, old_level, etage, BG, exit_door, current_room, next_room_position
+    global level, old_level, etage, mobs, obstacles, exit_door, BG
     boss_spawned = False
+    exit_door = None
+    current_room = "room1"
+    next_room_position = None
 
+    # Initial Background setup
+    BG = pygame.image.load("assets/Graphics/background.png")
+    BG = pygame.transform.scale(BG, (width, height))
+
+    if hero.in_boss_room:
+        if not boss_spawned and len(mobs) == 0:
+            add_boss(hero)
+            boss_spawned = True
+    else:
+        while len(mobs) < 5:
+            add_mob(hero)
+    while len(obstacles) < 2:
+        add_obstacle(hero)
+
+    # Function to spawn exit door at random position
     def spawn_exit_door():
         positions = ["top", "bottom", "left", "right"]
         position = random.choice(positions)
         return ExitDoor(position)
 
     exit_door = spawn_exit_door()
-
-    def reset_room():
-        while len(rooms[current_room]["mobs"]) < 5:
-            add_mob(hero)
-        while len(rooms[current_room]["obstacles"]) < 2:
-            add_obstacle(hero)
-
-    def clear_current_room():
-        rooms[current_room]["mobs"].empty()
-        rooms[current_room]["obstacles"].empty()
-
-    if hero.in_boss_room:
-        if not boss_spawned and len(mobs) == 0:
-            add_boss(hero, rooms[current_room]["mobs"])
-            boss_spawned = True
-    else:
-        reset_room()
 
     while True:
         for event in pygame.event.get():
@@ -152,9 +148,8 @@ def game(screen, pause=False):
 
         screen.blit(BG, (0, 0))
 
-        if len(rooms[current_room]["mobs"]) == 0:
+        if len(mobs) == 0:
             if hero.rect.colliderect(exit_door.rect):
-                previous_room = current_room
                 if exit_door.rect.center == (width // 2, 0):
                     next_room_position = "bottom"
                 elif exit_door.rect.center == (width // 2, height):
@@ -169,30 +164,31 @@ def game(screen, pause=False):
                     if etage == 1:
                         BG = pygame.image.load("assets/Graphics/background.png")
                         BG = pygame.transform.scale(BG, (width, height))
-                    elif etage == 2:
-                        BG = pygame.image.load("assets/Graphics/background2.png")
-                        BG = pygame.transform.scale(BG, (width, height))
                     if level == 10:
-                        add_boss(hero, rooms[current_room]["mobs"])
-                        etage += 1
-                        level = 1
+                        add_boss(hero)
                         old_level = level
                         BG = pygame.image.load("assets/Graphics/boss_background.png")
                         BG = pygame.transform.scale(BG, (width, height))
+                    else:
+                        old_level = level
+                        mobs = []
+                        obstacles = []
+                        for _ in range(5):
+                            add_mob(hero)
+                        for _ in range(2):
+                            add_obstacle(hero)
+                    exit_door = spawn_exit_door()
 
-                current_room = f"room{level}"
-                if current_room not in rooms:
-                    rooms[current_room] = {"mobs": pygame.sprite.Group(), "obstacles": pygame.sprite.Group()}
-                reset_room()
-                exit_door = spawn_exit_door()
-
-        for mob in rooms[current_room]["mobs"]:
+        for mob in mobs:
             mob.attack(hero, projectiles)
             mob.update()
             mob.draw(screen)
+            if isinstance(mob, Boss):
+                mob.attack(hero, projectiles)
+                mob.update()
 
-        hero.attack(rooms[current_room]["mobs"])
-        hero.update(rooms[current_room]["mobs"], rooms[current_room]["obstacles"])
+        hero.attack(mobs)
+        hero.update(mobs, obstacles)
         projectiles.update()
 
         for projectile in projectiles:
@@ -200,13 +196,26 @@ def game(screen, pause=False):
                 hero.hurt(20)
                 projectile.kill()
 
+        for sprite in all_sprites:
+            if sprite != hero:
+                sprite.update()
         all_sprites.draw(screen)
 
+        for mob in mobs:
+            mob.draw(screen)
+
+        for obstacle in obstacles:
+            obstacle.draw(screen)
+
+        for projectiled in projectiles:
+            projectiled.draw(screen)
+
         if hero.weapon == gun:
-            hero.weapon.update(screen, rooms[current_room]["mobs"])
+            hero.weapon.update(screen, mobs)
 
         hero.draw(screen)
         screen.blit(hero.heart_image, (2, 2))
+
         if hero.shield > 0:
             screen.blit(hero.shield_image, (0, 50))
 
@@ -215,5 +224,8 @@ def game(screen, pause=False):
         pygame.display.update()
         fps.tick(120)
 
+
+
 main_menu(screen)
+# Start the game
 game(screen)
