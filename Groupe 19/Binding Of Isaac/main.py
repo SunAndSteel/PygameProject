@@ -72,7 +72,6 @@ def pause_menu(screen, paused):
 
 
 def save_game():
-    # Implement your save game logic here
     pass
 
 def draw_text(text, font, color, surface, x, y):
@@ -174,7 +173,7 @@ def game(screen, pause=False):
                 mob.draw(screen)
         else:
             level
-            
+   
 
         for obstacle in obstacles:
             obstacle.draw(screen)
@@ -195,6 +194,4 @@ def game(screen, pause=False):
         pygame.display.update()
         fps.tick(120)
 
-
-# Start the game
 game(screen)

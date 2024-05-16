@@ -28,6 +28,11 @@ class Fireball(pygame.sprite.Sprite):
         surface.blit(self.image, self.rect)
 
 class FireWall(pygame.sprite.Sprite):
+    """_summary_
+
+    Args:
+        
+    """
     def __init__(self, start_pos, target_pos):
         super().__init__()
         image = pygame.image.load('assets/Graphics/Projectiles/firewall.png')  # Load the firewall image

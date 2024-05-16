@@ -1,11 +1,17 @@
 from Material import Material
 
-class Room:
-    doorsNumbers = 0
+class Room():
+    """
+        Réprensentation des infos à l'écran
+        col et row = taille du jeu en tiles
+    """
     col = 45
     row = 80
-    tile_skin = Material.wall
+    def __init__(self) -> None:
+        doorsNumbers = 0
+        tile_texture = Material.wall
     
+
     @staticmethod
     def generate_room(cols, rows):
         """
