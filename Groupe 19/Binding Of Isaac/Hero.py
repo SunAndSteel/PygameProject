@@ -39,7 +39,7 @@ class Hero(Entity):
         self.crosshair_pos = [0, 0]  # Initialize the position of the crosshair
         self.heart_image = pygame.transform.scale((pygame.image.load("assets/Graphics/HUD/HUD_heart.png")), (40, 40))
         self.shield_image = pygame.transform.scale((pygame.image.load("assets/Graphics/HUD/HUD_shield.png")), (50, 50))
-        self.in_boss_room = False
+        self.in_boss_room = True
         self.mouvements = "perso"
 
 

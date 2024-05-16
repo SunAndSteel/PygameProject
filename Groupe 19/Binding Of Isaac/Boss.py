@@ -1,7 +1,6 @@
 import json
 import pygame
 import random
-from Entitys.BossInfoShowed import BossInfoShowed
 from Entity import Entity
 
 HAUTEUR, LARGEUR = 800, 800
@@ -45,8 +44,10 @@ class FireWall(pygame.sprite.Sprite):
     def draw(self, surface):
         surface.blit(self.image, self.rect)
 
+
+
 class Boss(Entity):
-    def __init__(self, image, x, y, hero, path = "Entitys/Mobs/Boss/boss.json"):
+    def __init__(self, image, x, y, hero, path="Entitys/Mobs/Boss/boss.json"):
         super().__init__(path)
         self.fury_mode = False
         self.resistance = 0
@@ -54,7 +55,7 @@ class Boss(Entity):
         self.load_boss_data(path)
         self.image = image
         self.rect = self.image.get_rect(topleft=(x, y))
-        self.last_attack_time = pygame.time.get_ticks()  # Store the time of the last attack
+        self.last_attack_time = pygame.time.get_ticks()
         self.x = x
         self.y = y
         self.target = hero
@@ -65,8 +66,8 @@ class Boss(Entity):
         self.change_movement_time = 5000
 
     def update(self):
+        self.spawn_obstacles()
         super().update()
-
 
     def load_boss_data(self, path):
         try:
@@ -87,45 +88,19 @@ class Boss(Entity):
     def draw(self, screen):
         screen.blit(self.image, self.rect)
 
-    def update(self):
-        self.spawn_obstacles()
-
-        super().update()
-
-    def show_informations(self):
-        super().show_informations()
-        if self.show_player_information:
-            info_surface = pygame.Surface((200, 50))
-            info_surface.fill((0, 0, 0))
-            info = [
-                f"Nom: {self.name}",
-                f"Niveau: {self.level}"
-            ]
-            font = pygame.font.SysFont("Arial", 20)
-            # Parcourt la liste des textes avec leur index Ce n'est pas mon code bien sur mais le fruit de recherches approfondie sur plusieurs topics pygame
-            for i, text in enumerate(info):
-                # Rend le texte avec une police spécifique et une couleur blanche
-                text_render = font.render(text, True, (255, 255, 255))
-                # Place le texte rendu verticalement sur la surface
-                info_surface.blit(text_render, (10, 10 + i * 20))
-            # Affiche la surface d'informations au-dessus du personnage dans le jeu
-            screen.blit(info_surface, (self.rect.centerx - info_surface.get_width() // 2, self.rect.top - 30))
-
-
     def attack(self, target, projectiles=None):
         if self.Id == 4:
-
             from main import projectiles
             current_time = pygame.time.get_ticks()
             if current_time - self.last_attack_time >= (500 if self.fury_mode else 1500):
                 attack_type = random.choice(['fireball', 'firewall'])
                 if attack_type == 'fireball':
                     fireball = Fireball(self.rect.center, target.rect.center)
-                    projectiles.add(fireball)  # Add the fireball to the projectiles group
+                    projectiles.add(fireball)
                 elif attack_type == 'firewall':
                     firewall = FireWall(self.rect.center, target.rect.center)
-                    projectiles.add(firewall)  # Add the firewall to the projectiles group
-                self.last_attack_time = current_time  # Update the last attack time
+                    projectiles.add(firewall)
+                self.last_attack_time = current_time
 
     def hurt(self, damage, mobs):
         self.health -= damage
@@ -134,8 +109,12 @@ class Boss(Entity):
             self.fury_mode = True
 
         if self.health <= 0:
-            mobs.remove(self)  # Remove the boss from the mobs list
-            self.kill()  # Remove the boss from all sprite groups
+            from main import etage, level
+            mobs.remove(self)
+            self.kill()
+            global etage, level
+            etage += 1  # Increment the floor when the boss is killed
+            level = 1
 
     def spawn_obstacles(self):
         if self.Id == 4:

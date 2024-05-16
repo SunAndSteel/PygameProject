@@ -7,6 +7,7 @@ from Weapons import *
 from Obstacle import *
 from Boss import *
 from Mob import *
+from Door_exit import ExitDoor
 
 pygame.init()
 
@@ -23,7 +24,6 @@ fps = pygame.time.Clock()
 pause = False
 font = pygame.font.Font('assets/font/Hammer God Font DEMO.ttf', 36)
 
-
 BG = pygame.image.load("assets/Graphics/background.png")
 BG = pygame.transform.scale(BG, (width, height))
 
@@ -32,15 +32,14 @@ all_sprites = pygame.sprite.Group()
 all_sprites.add(hero)
 projectiles = pygame.sprite.Group()
 
-dropped_weapons = []  # Initialize the dropped_weapons list here
-
-
+level = 1
+old_level = level
+etage = 1
 
 def pause_menu(screen, paused):
     resume_button = Button(image=None, pos=(width // 2, height // 2 - 100), text_input='Press r to Resume', font=font, base_color=(255, 255, 255), hovering_color='Green')
     save_button = Button(image=None, pos=(width // 2, height // 2), text_input='Press s to Save', font=font, base_color=(255, 255, 255), hovering_color='Green')
     quit_button = Button(image=None, pos=(width // 2, height // 2 + 100), text_input='Press q to Quit', font=font, base_color=(255, 255, 255), hovering_color='Green')
-
 
     while True:
         for event in pygame.event.get():
@@ -72,9 +71,7 @@ def pause_menu(screen, paused):
         pygame.display.update()
         fps.tick(60)
 
-
 def save_game():
-    # Implement your save game logic here
     pass
 
 def draw_text(text, font, color, surface, x, y):
@@ -90,9 +87,9 @@ def main_menu(screen):
                 pygame.quit()
                 exit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_n:  # New Game
+                if event.key == pygame.K_n:
                     return 'new'
-                elif event.key == pygame.K_l:  # Load Game
+                elif event.key == pygame.K_l:
                     return 'load'
 
         screen.fill((0, 0, 0))
@@ -103,10 +100,17 @@ def main_menu(screen):
         pygame.display.update()
         fps.tick(60)
 
-
 def game(screen, pause=False):
-    original_screen = screen.copy()
+    global level, old_level, etage, mobs, obstacles, exit_door, BG
     boss_spawned = False
+    exit_door = None
+    current_room = "room1"
+    next_room_position = None
+
+    # Initial Background setup
+    BG = pygame.image.load("assets/Graphics/background.png")
+    BG = pygame.transform.scale(BG, (width, height))
+
     if hero.in_boss_room:
         if not boss_spawned and len(mobs) == 0:
             add_boss(hero)
@@ -117,6 +121,14 @@ def game(screen, pause=False):
     while len(obstacles) < 2:
         add_obstacle(hero)
 
+    # Function to spawn exit door at random position
+    def spawn_exit_door():
+        positions = ["top", "bottom", "left", "right"]
+        position = random.choice(positions)
+        return ExitDoor(position)
+
+    exit_door = spawn_exit_door()
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -125,50 +137,58 @@ def game(screen, pause=False):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
                     pygame.image.save(screen, 'pause.png')
-
-                    # Load the screenshot
                     screenshot = pygame.image.load('pause.png')
-
-                    # Create a new Surface with the same size as the screenshot
                     grey_screenshot = pygame.Surface(screenshot.get_size())
-
-                    # Iterate over each pixel in the screenshot
                     for x in range(screenshot.get_width()):
                         for y in range(screenshot.get_height()):
-                            # Get the red, green, and blue values of the pixel
                             r, g, b, a = screenshot.get_at((x, y))
-
-                            # Calculate the grey value
                             grey = int(0.299 * r + 0.587 * g + 0.114 * b)
-
-                            # Set the pixel of the grey screenshot to the grey value
                             grey_screenshot.set_at((x, y), (grey, grey, grey, a))
                     pause_menu(screen, grey_screenshot)
 
         screen.blit(BG, (0, 0))
 
+        if len(mobs) == 0:
+            if hero.rect.colliderect(exit_door.rect):
+                if exit_door.rect.center == (width // 2, 0):
+                    next_room_position = "bottom"
+                elif exit_door.rect.center == (width // 2, height):
+                    next_room_position = "top"
+                elif exit_door.rect.center == (0, height // 2):
+                    next_room_position = "right"
+                elif exit_door.rect.center == (width, height // 2):
+                    next_room_position = "left"
+
+                level += 1
+                if level > old_level:
+                    if etage == 1:
+                        BG = pygame.image.load("assets/Graphics/background.png")
+                        BG = pygame.transform.scale(BG, (width, height))
+                    if level == 10:
+                        add_boss(hero)
+                        old_level = level
+                        BG = pygame.image.load("assets/Graphics/boss_background.png")
+                        BG = pygame.transform.scale(BG, (width, height))
+                    else:
+                        old_level = level
+                        mobs = []
+                        obstacles = []
+                        for _ in range(5):
+                            add_mob(hero)
+                        for _ in range(2):
+                            add_obstacle(hero)
+                    exit_door = spawn_exit_door()
+
         for mob in mobs:
             mob.attack(hero, projectiles)
             mob.update()
             mob.draw(screen)
-
-            from Mob import mort
-            if mort:  # Replace this with your condition to check if the mob is dead
-                pos_x, pos_y = mob.kill(dropped_weapons)  # Get the position of the killed mob
-                from Weapons import Gun
-                print('hell yeah')
-                weapon = Gun()
-                weapon.pos = [pos_x, pos_y]  # Set the position of the weapon
-                weapon.image_path = "assets/Graphics/Weapons/gun.png"  # Set the image path of the weapon
-                dropped_weapons.append(weapon)  # Add the weapon to the list of dropped weapons
-
-                if isinstance(mob, Boss):
-                    mob.attack(hero, projectiles)
-                    mob.update()
+            if isinstance(mob, Boss):
+                mob.attack(hero, projectiles)
+                mob.update()
 
         hero.attack(mobs)
         hero.update(mobs, obstacles)
-
         projectiles.update()
 
         for projectile in projectiles:
@@ -194,16 +214,18 @@ def game(screen, pause=False):
             hero.weapon.update(screen, mobs)
 
         hero.draw(screen)
-
         screen.blit(hero.heart_image, (2, 2))
 
         if hero.shield > 0:
             screen.blit(hero.shield_image, (0, 50))
 
+        exit_door.draw(screen)  # Draw the exit door
 
         pygame.display.update()
         fps.tick(120)
 
 
+
+main_menu(screen)
 # Start the game
 game(screen)

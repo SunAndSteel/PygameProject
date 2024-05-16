@@ -16,12 +16,11 @@ clock = pygame.time.Clock()
 mort = False
 
 class Mob(Boss):
-    def __init__(self, image, x, y, target,Id=2 ,path='Entitys/Mobs/Normal_Mobs/RandomMob.json'):
-        super().__init__(image, x, y, target, path)
+    def __init__(self, image, x, y, target,Id=2 ):
+        super().__init__(image, x, y, target)
         self.health = 100
         self.level = 50
         self.Id = Id
-        self.load_mob_data(path)
         self.x = x
         self.y = y
         self.target = target
@@ -29,18 +28,6 @@ class Mob(Boss):
         self.rect = self.image.get_rect(topleft=(x, y))
         self.last_attack_time = pygame.time.get_ticks()  # Store the time of the last attack
 
-    def load_mob_data(self, path):
-        try:
-            with open(path, 'r') as file:
-                mob_data = json.load(file)
-                self.health = mob_data.get("health", self.health)
-                self.level = mob_data.get("level", self.level)
-        except FileNotFoundError:
-            print(f"Erreur : fichier JSON introuvable - {path}")
-        except json.JSONDecodeError:
-            print(f"Erreur : fichier JSON malformé - {path}")
-        except Exception as e:
-            print(f"Erreur lors du chargement des données depuis le fichier JSON: {e}")
 
     def constant_pos(self):
         return [self.rect.x, self.rect.y]
@@ -62,25 +49,25 @@ class Mob(Boss):
             self.last_attack_time = current_time
 
     def kill(self, mobs):
-        from main import dropped_weapons
-        random_number = 2
-        if random_number == 2:
-            second_random_number = 0
-            if second_random_number == 0:
-                from Weapons import Gun
-                weapon = Gun()
-                weapon.pos = [self.rect.x, self.rect.y]  # Set the position of the weapon
-                weapon.image_path = "assets/Graphics/Weapons/gun.png"  # Set the image path of the weapon
-                dropped_weapons.append(weapon)  # Add the weapon to the list of dropped
-                print("j'ai dessiné un gun")
-            elif second_random_number == 1:
-                pass
-            elif second_random_number == 2:
-                pass
+        # from main import dropped_weapons
+        # random_number = 2
+        # if random_number == 2:
+        #     second_random_number = 0
+        #     if second_random_number == 0:
+        #         from Weapons import Gun
+        #         weapon = Gun()
+        #         weapon.pos = [self.rect.x, self.rect.y]
+        #         weapon.image_path = "assets/Graphics/Weapons/gun.png"
+        #         dropped_weapons.append(weapon)
+        #         print("j'ai dessiné un gun")
+        #     elif second_random_number == 1:
+        #         pass
+        #     elif second_random_number == 2:
+        #         pass
         if self in mobs:
             mobs.remove(self)
-        super().kill()  # Call the kill method of the superclass
-        return self.rect.x, self.rect.y  # Return the position of the mob when it is killed
+        super().kill()
+        # return self.rect.x, self.rect.y
 
     def update(self):
         if self.Id == 2 or self.Id == 3:
@@ -100,10 +87,10 @@ class Mob(Boss):
     def draw(self, surface):
         surface.blit(self.image, self.rect)
 
-    def is_dead(self):
-        global mort
-        if self.health <= 0:
-            mort = True
+    # def is_dead(self):
+    #     global mort
+    #     if self.health <= 0:
+    #         mort = True
 
     def show_informations(self):
         super().show_informations()

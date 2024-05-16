@@ -2,7 +2,6 @@ import os
 import pygame
 import json
 import random
-from Entitys.PlayerInfo import PlayerInfo, PlayerInfoSprite
 
 HAUTEUR, LARGEUR = 1280 , 720
 pygame.init()
