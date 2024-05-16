@@ -1,6 +1,0 @@
-# Ignore .idea folders
-.idea/
-
-# Ignore Python bytecode files and folders
-__pycache__/
-*.pyc
