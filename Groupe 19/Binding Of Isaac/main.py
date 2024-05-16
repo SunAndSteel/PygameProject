@@ -8,11 +8,15 @@ from Weapons import *
 from Obstacle import *
 from Boss import *
 
+
 pygame.init()
 music = pygame.mixer.music.load("assets/Sound/game track.mp3")
 pygame.mixer.music.play(-1)
 pygame.mixer.music.set_volume(0.1)
 width, height = 1280, 720
+level = 1
+old_level = level
+
 
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Binding of Isaac")
@@ -165,8 +169,12 @@ def game(screen, pause=False):
                 sprite.update()
         all_sprites.draw(screen)
 
-        for mob in mobs:
-            mob.draw(screen)
+        if mob == None or 0:
+            for mob in mobs:
+                mob.draw(screen)
+        else:
+            level
+            
 
         for obstacle in obstacles:
             obstacle.draw(screen)
