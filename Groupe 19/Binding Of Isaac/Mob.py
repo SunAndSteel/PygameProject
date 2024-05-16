@@ -58,6 +58,17 @@ class Mob(Boss):
             self.last_attack_time = current_time
 
     def kill(self, mobs):
+        random_number = 2
+        if random_number == 2:
+            second_random_number = 0
+            if second_random_number == 0:
+                from Weapons import Gun
+                Gun.draw_gun(screen, self.rect.x, self.rect.y)
+                print("j'ai dessiné un gun")
+            elif second_random_number == 1:
+                pass
+            elif second_random_number == 2:
+                pass
         if self in mobs:
             mobs.remove(self)
         super().kill()  # Call the kill method of the superclass
