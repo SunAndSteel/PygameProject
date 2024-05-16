@@ -6,10 +6,6 @@ from Boss import Boss
 
 
 pygame.init()
-
-# Add a timer for adding mobs
-
-
 mobs = []
 obstacles = []
 screen = pygame.display.set_mode((1280, 720))
@@ -41,7 +37,7 @@ Hitler_boss = pygame.transform.scale(Hitler_boss, (200, 200))
 
 def add_obstacle(hero, max_obstacles=2):
     global obstacles
-    min_distance_from_hero = 200  # Minimum distance from hero
+    min_distance_from_hero = 200
 
 
     obstacle_images_effects = [(heal, 'heal'), (speed, 'speed'), (shield, 'shield'), (Rage, 'rage'), (unheal, 'unheal')]
@@ -59,7 +55,7 @@ def add_obstacle(hero, max_obstacles=2):
         return
 
     obstacles.append(obstacle)
-    obstacle.draw(screen)  # Draw the obstacle on the screen
+    obstacle.draw(screen)
 
 def add_mob(hero):
     global mobs

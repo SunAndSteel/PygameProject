@@ -12,7 +12,7 @@ class Entity(pygame.sprite.Sprite):
         self.speed = 2.5
         self.is_dead = False
         self.strength_power = 1
-        self.health = 100
+        self.__health = 100
         self.max_health = 100
         self.image = pygame.Surface((75, 75))
         self.image.fill((255, 0, 0))
@@ -23,7 +23,23 @@ class Entity(pygame.sprite.Sprite):
         self.show_player_information = False
         self.load_from_json(path)
         self.mouvements = random.choice(["up-down", "down-up", "left-right", "right-left", "carré", "losange", "diagonale"])
-        self.change_movement_time = 5000
+        self.__change_movement_time = 5000
+
+    @property
+    def health(self):
+        return self.__health
+
+    @health.setter
+    def health(self, value):
+        self.__health = value
+
+    @property
+    def change_movement_time(self):
+        return self.__change_movement_time
+
+    @change_movement_time.setter
+    def change_movement_time(self, value):
+        self.__change_movement_time = value
 
 
     def change_movement(self):

@@ -22,8 +22,8 @@ class Hero(Entity):
         self.normal_sword_range = 150  # Define the range of the sword
         self.knife_range = self.normal_knife_range  # Set the initial range of the knife
         self.sword_range = self.normal_sword_range
-        self.health = 200
-        self.max_health = 200
+        self.__health = 200
+        self.__max_health = 200
         self.health_bar_lenght = 400
         self.health_ratio = self.max_health / self.health_bar_lenght
         self.last_attack_time = pygame.time.get_ticks()  # Store the time of the last attack
@@ -41,7 +41,21 @@ class Hero(Entity):
         self.shield_image = pygame.transform.scale((pygame.image.load("assets/Graphics/HUD/HUD_shield.png")), (50, 50))
         self.in_boss_room = False
         self.mouvements = "perso"
+    @property
+    def health(self):
+        return self.__health
 
+    @health.setter
+    def health(self, value):
+        self.__health = value
+
+    @property
+    def max_health(self):
+        return self.__max_health
+
+    @max_health.setter
+    def max_health(self, value):
+        self.__max_health = value
 
 
     def load_from_json(self, file_path):

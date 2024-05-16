@@ -16,18 +16,73 @@ clock = pygame.time.Clock()
 mort = False
 
 class Mob(Boss):
-    def __init__(self, image, x, y, target,Id=2 ):
+    def __init__(self, image, x, y, target, Id=2):
         super().__init__(image, x, y, target)
-        self.health = 100
-        self.level = 50
-        self.Id = Id
-        self.x = x
-        self.y = y
-        self.target = target
+        self.__health = 100
+        self.__level = 50
+        self.__Id = Id
+        self.__x = x
+        self.__y = y
+        self.__target = target
         self.image = image
         self.rect = self.image.get_rect(topleft=(x, y))
-        self.last_attack_time = pygame.time.get_ticks()  # Store the time of the last attack
+        self.__last_attack_time = pygame.time.get_ticks()  # Store the time of the last attack
 
+    @property
+    def health(self):
+        return self.__health
+
+    @health.setter
+    def health(self, value):
+        self.__health = value
+
+    @property
+    def level(self):
+        return self.__level
+
+    @level.setter
+    def level(self, value):
+        self.__level = value
+
+    @property
+    def Id(self):
+        return self.__Id
+
+    @Id.setter
+    def Id(self, value):
+        self.__Id = value
+
+    @property
+    def x(self):
+        return self.__x
+
+    @x.setter
+    def x(self, value):
+        self.__x = value
+
+    @property
+    def y(self):
+        return self.__y
+
+    @y.setter
+    def y(self, value):
+        self.__y = value
+
+    @property
+    def target(self):
+        return self.__target
+
+    @target.setter
+    def target(self, value):
+        self.__target = value
+
+    @property
+    def last_attack_time(self):
+        return self.__last_attack_time
+
+    @last_attack_time.setter
+    def last_attack_time(self, value):
+        self.__last_attack_time = value
 
     def constant_pos(self):
         return [self.rect.x, self.rect.y]
