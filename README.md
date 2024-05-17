@@ -16,6 +16,7 @@ https://hehbe-my.sharepoint.com/:b:/g/personal/kyllian_evrard_std_heh_be/EYjS9V0
 
 ## Ressources utilisées : 
 ### Gestion des rôles et répartition des tâches : 
+Nous avons utilisé le site Trello :
 https://trello.com/b/Ovfw1ki8
 
 ### Conventions établies :
