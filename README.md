@@ -6,7 +6,13 @@
 - Urbain Florent
 
 ## Contexte (Histoire) :
-“WOW NO FUCKING WAY ! HITLER THE RETURN !? BATJEW THE VENGEANCE” raconte une histoire assez spéciale : Après la Seconde Guerre Mondiale, Hitler a survécu et s’est caché en Argentine, accompagné de son armée, il s’est allié avec une tribu Amérindienne qui possède une élixir qui rendrait l’homme immortel. Batjew, le batman des juifs, en a été informé et décida alors de partir pour l'Argentine afin de traquer Hitler, le tuer et venger son peuple, avant qu’il ne puisse utiliser cet élixir et devenir invincible.
+“WOW NO FUCKING WAY ! HITLER THE RETURN !? BATJEW THE VENGEANCE” raconte une histoire assez spéciale : 
+Plongez dans une aventure palpitante et inédite avec notre nouveau jeu d'action roguelike, inspiré par l'intensité de "The Binding of Isaac". Le joueur sera immergé dans un monde où chaque pièce recèle de terribles ennemis et de redoutables boss à affronter. Mais au-delà du gameplay addictif, c'est le scénario unique qui distingue notre jeu.
+Dans "WOW NO FUCKING WAY ! HITLER THE RETURN !? BATJEW THE VENGEANCE", préparez-vous à découvrir une histoire alternative saisissante. Après la Seconde Guerre mondiale, Adolf Hitler aurait survécu et se serait réfugié en Argentine. Là-bas, avec son armée loyale, il s'est allié à une tribu amérindienne possédant un élixir légendaire capable de conférer l'immortalité. Cette alliance perverse menace l'équilibre du monde.
+C'est alors que Batjew, le justicier des opprimés et protecteur de son peuple juif, entre en scène. Ayant appris la funeste nouvelle, il se lance dans une mission périlleuse en Argentine. Son objectif est clair : traquer Hitler, empêcher l'utilisation de l'élixir et venger les siens.
+"WOW NO FUCKING WAY ! HITLER THE RETURN !? BATJEW THE VENGEANCE" promet une expérience de jeu inoubliable, où l'histoire et l'action s'entrelacent pour créer une quête de justice et de rédemption. Soyez prêt à affronter vos pires cauchemars et à écrire une nouvelle page de l'Histoire.
+Venez découvrir ce récit audacieux et engageant, et préparez-vous à une bataille où chaque décision peut changer le cours du destin.
+
 
 ## Contexte (Scolaire) :
 Ce projet a été realisé dans le cadre d'une semaine de Hackathon à la Haute École en Hainaut de Mons. Par 4 étudiants en section informatique
