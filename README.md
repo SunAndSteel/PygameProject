@@ -17,6 +17,9 @@ Venez découvrir ce récit audacieux et engageant, et préparez-vous à une bata
 ## Contexte (Scolaire) :
 Ce projet a été realisé dans le cadre d'une semaine de Hackathon à la Haute École en Hainaut de Mons. Par 4 étudiants en section informatique
 
+## Utilisation du jeu :
+Pour lancer le jeu, veuillez lancer le fichier menu et non le fichier main
+
 ## Cahier des charges : 
 https://hehbe-my.sharepoint.com/:b:/g/personal/kyllian_evrard_std_heh_be/EYjS9V0T5FNKhATQmClop0gBn7Vnbk_5Sy8boUMUhNWzrQ?e=Az3jrj
 
