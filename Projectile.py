@@ -2,24 +2,22 @@ import pygame
 
 pygame.init()
 
-
 class Projectile(pygame.sprite.Sprite):
     '''
-    Classe Projectile : Classe représentant les projectiles tirés par les mobs
+    Classe projectile
     '''
-    def __init__(self, start_pos, target_pos,image):
+    def __init__(self, start_pos, target_pos, image):
         super().__init__()
         image = pygame.image.load(image).convert_alpha()
-        self.image = pygame.transform.scale(image, (50, 50))
-        self.rect = self.image.get_rect(center=start_pos)
-        self.direction = pygame.Vector2(target_pos) - self.rect.center  # Calcule la direction vers le joueur
-        self.direction.normalize_ip()
-        self.speed = 10
+        self.__image = pygame.transform.scale(image, (50, 50))
+        self.__rect = self.__image.get_rect(center=start_pos)
+        self.__direction = pygame.Vector2(target_pos) - self.__rect.center
+        self.__direction.normalize_ip()
+        self.__speed = 10
 
     def update(self):
         '''
-        Méthode pour mettre à jour la position du projectile
-        Supprime le projectile si il sort de l'écran
+        actualise la position du projectile
         '''
         self.rect.center += self.direction * self.speed
         if not pygame.display.get_surface().get_rect().colliderect(self.rect):
@@ -27,3 +25,35 @@ class Projectile(pygame.sprite.Sprite):
 
     def draw(self, surface):
         surface.blit(self.image, self.rect)
+
+    @property
+    def image(self):
+        return self.__image
+
+    @image.setter
+    def image(self, value):
+        self.__image = value
+
+    @property
+    def rect(self):
+        return self.__rect
+
+    @rect.setter
+    def rect(self, value):
+        self.__rect = value
+
+    @property
+    def direction(self):
+        return self.__direction
+
+    @direction.setter
+    def direction(self, value):
+        self.__direction = value
+
+    @property
+    def speed(self):
+        return self.__speed
+
+    @speed.setter
+    def speed(self, value):
+        self.__speed = value
