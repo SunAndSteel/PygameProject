@@ -38,8 +38,8 @@ etage = 1
 
 def pause_menu(screen, paused):
     '''
-    Cette fonction va nous montrer le menu de pause et agir selon les interactions de l'utilisateur
-    Les actions possibles sont de reprendre la partie, sauvegarder la partie ou quitter le jeu
+    fonction qui affiche le menu pause
+    les options sont: resume, save, quit
     '''
     resume_button = Button(image=None, pos=(width // 2, height // 2 - 100), text_input='Press r to Resume', font=font, base_color=(255, 255, 255), hovering_color='Green')
     save_button = Button(image=None, pos=(width // 2, height // 2), text_input='Press s to Save', font=font, base_color=(255, 255, 255), hovering_color='Green')
@@ -76,14 +76,11 @@ def pause_menu(screen, paused):
         fps.tick(60)
 
 def save_game():
-    '''
-    La fonction pour sauvegarder la partie aurait été ajouter ici
-    '''
     pass
 
 def draw_text(text, font, color, surface, x, y):
     '''
-    Cette fonction va nous permettre de dessiner du texte sur l'écran facilement
+    fonction qui affiche du texte sur l'ecran
     '''
     textobj = font.render(text, True, color)
     textrect = textobj.get_rect()
@@ -92,8 +89,8 @@ def draw_text(text, font, color, surface, x, y):
 
 def main_menu(screen):
     '''
-    Cette fonction va nous montrer le menu principal et agir selon les interactions de l'utilisateur
-    Les actions possibles sont de commencer une nouvelle partie ou de charger une partie sauvegardée
+    fonction qui affiche le menu principal
+    les options sont: new game, load game
     '''
     while True:
         for event in pygame.event.get():
@@ -116,7 +113,7 @@ def main_menu(screen):
 
 def game(screen, pause=False):
     '''
-    Cette fonction va gérer le jeu en lui-même
+    fonction qui gere le jeu
     '''
     global level, old_level, etage, mobs, obstacles, exit_door, BG
     boss_spawned = False
@@ -138,9 +135,6 @@ def game(screen, pause=False):
         add_obstacle(hero)
 
     def spawn_exit_door():
-        '''
-        Cette fonction va nous permettre de générer une porte de sortie aléatoirement
-        '''
         positions = ["top", "bottom", "left", "right"]
         position = random.choice(positions)
         return ExitDoor(position)
@@ -154,10 +148,6 @@ def game(screen, pause=False):
                 exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
-                    '''
-                    Si l'utilisateur appuie sur la touche 'p', on va afficher le menu de pause
-                    On va prendre un screenshot de l'écran et le transformer en noir et blanc
-                    '''
                     pygame.image.save(screen, 'pause.png')
                     screenshot = pygame.image.load('pause.png')
                     grey_screenshot = pygame.Surface(screenshot.get_size())
@@ -171,9 +161,6 @@ def game(screen, pause=False):
         screen.blit(BG, (0, 0))
 
         if len(mobs) == 0:
-            '''
-            Si tous les mobs sont morts, on va passer à la salle suivante
-            '''
             if hero.rect.colliderect(exit_door.rect):
                 if exit_door.rect.center == (width // 2, 0):
                     next_room_position = "bottom"
@@ -186,9 +173,6 @@ def game(screen, pause=False):
 
                 level += 1
                 if level > old_level:
-                    '''
-                    Si on a passé à un nouveau niveau, on va changer le background et les mobs
-                    '''
                     if etage == 1:
                         BG = pygame.image.load("assets/Graphics/background.png")
                         BG = pygame.transform.scale(BG, (width, height))
@@ -206,10 +190,6 @@ def game(screen, pause=False):
                         for _ in range(2):
                             add_obstacle(hero)
                     exit_door = spawn_exit_door()
-
-        '''
-        On va mettre à jour et dessiner les différents éléments du jeu
-        '''
 
         for mob in mobs:
             mob.attack(hero, projectiles)
@@ -252,6 +232,22 @@ def game(screen, pause=False):
             screen.blit(hero.shield_image, (0, 50))
 
         exit_door.draw(screen)
+
+        hero_status = hero.hurt(0)
+        if hero_status == 'dead':
+            pygame.mixer.music.stop()
+            screen.fill((0, 0, 0))
+            draw_text('GAME OVER', font, (255, 255, 255), screen, width / 2 - 100, height / 2 - 50 )
+            draw_text('Press q to quit', font, (255, 255, 255), screen, width / 2 - 100, height / 2 )
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_q:
+                        pygame.quit()
+                        exit()
 
         pygame.display.update()
         fps.tick(120)
