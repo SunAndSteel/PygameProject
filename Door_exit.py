@@ -11,7 +11,6 @@ class ExitDoor(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.image.load("assets/Graphics/exit_door.png")
         self.rect = self.image.get_rect()
-
         if position == "top":
             self.rect.center = (width // 2, 50)
         elif position == "bottom":
