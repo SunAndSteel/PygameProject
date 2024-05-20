@@ -3,10 +3,6 @@ import pygame
 import random
 from Entity import Entity
 
-HAUTEUR, LARGEUR = 800, 800
-pygame.init()
-screen = pygame.display.set_mode((HAUTEUR, LARGEUR))
-clock = pygame.time.Clock()
 
 class Fireball(pygame.sprite.Sprite):
     '''
@@ -15,19 +11,52 @@ class Fireball(pygame.sprite.Sprite):
     def __init__(self, start_pos, target_pos):
         super().__init__()
         image = pygame.image.load('assets/Graphics/Projectiles/fireball.png')
-        self.image = pygame.transform.scale(image, (50, 50))
-        self.rect = self.image.get_rect(center=start_pos)
-        self.direction = pygame.Vector2(target_pos) - self.rect.center
-        self.direction.normalize_ip()
-        self.speed = 8
+        self.__image = pygame.transform.scale(image, (50, 50))
+        self.__rect = self.__image.get_rect(center=start_pos)
+        self.__direction = pygame.Vector2(target_pos) - self.__rect.center
+        self.__direction.normalize_ip()
+        self.__speed = 8
 
     def update(self):
-        self.rect.center += self.direction * self.speed
-        if not pygame.display.get_surface().get_rect().colliderect(self.rect):
+        self.__rect.center += self.__direction * self.__speed
+        if not pygame.display.get_surface().get_rect().colliderect(self.__rect):
             self.kill()
 
     def draw(self, surface):
-        surface.blit(self.image, self.rect)
+        surface.blit(self.__image, self.__rect)
+
+    @property
+    def image(self):
+        return self.__image
+
+    @image.setter
+    def image(self, value):
+        self.__image = value
+
+    @property
+    def rect(self):
+        return self.__rect
+
+    @rect.setter
+    def rect(self, value):
+        self.__rect = value
+
+    @property
+    def direction(self):
+        return self.__direction
+
+    @direction.setter
+    def direction(self, value):
+        self.__direction = value
+
+    @property
+    def speed(self):
+        return self.__speed
+
+    @speed.setter
+    def speed(self, value):
+        self.__speed = value
+
 
 class FireWall(pygame.sprite.Sprite):
     '''
@@ -36,20 +65,51 @@ class FireWall(pygame.sprite.Sprite):
     def __init__(self, start_pos, target_pos):
         super().__init__()
         image = pygame.image.load('assets/Graphics/Projectiles/firewall.png')
-        self.image = pygame.transform.scale(image, (100, 150))
-        self.rect = self.image.get_rect(center=start_pos)
-        self.direction = pygame.Vector2(target_pos) - self.rect.center
-        self.direction.normalize_ip()
-        self.speed = 7
+        self.__image = pygame.transform.scale(image, (100, 150))
+        self.__rect = self.__image.get_rect(center=start_pos)
+        self.__direction = pygame.Vector2(target_pos) - self.__rect.center
+        self.__direction.normalize_ip()
+        self.__speed = 7
 
     def update(self):
-        self.rect.center += self.direction * self.speed
-        if not pygame.display.get_surface().get_rect().colliderect(self.rect):
+        self.__rect.center += self.__direction * self.__speed
+        if not pygame.display.get_surface().get_rect().colliderect(self.__rect):
             self.kill()
 
     def draw(self, surface):
-        surface.blit(self.image, self.rect)
+        surface.blit(self.__image, self.__rect)
 
+    @property
+    def image(self):
+        return self.__image
+
+    @image.setter
+    def image(self, value):
+        self.__image = value
+
+    @property
+    def rect(self):
+        return self.__rect
+
+    @rect.setter
+    def rect(self, value):
+        self.__rect = value
+
+    @property
+    def direction(self):
+        return self.__direction
+
+    @direction.setter
+    def direction(self, value):
+        self.__direction = value
+
+    @property
+    def speed(self):
+        return self.__speed
+
+    @speed.setter
+    def speed(self, value):
+        self.__speed = value
 
 
 class Boss(Entity):
@@ -58,21 +118,21 @@ class Boss(Entity):
     '''
     def __init__(self, image, x, y, hero, path="Entitys/Mobs/Boss/boss.json"):
         super().__init__(path)
-        self.fury_mode = False
-        self.resistance = 0
-        self.level = 150
+        self.__fury_mode = False
+        self.__resistance = 0
+        self.__level = 150
         self.load_boss_data(path)
-        self.image = image
-        self.rect = self.image.get_rect(topleft=(x, y))
-        self.last_attack_time = pygame.time.get_ticks()
-        self.x = x
-        self.y = y
-        self.target = hero
-        self.Id = 4
-        self.health = 1000
-        self.last_spawn_time = pygame.time.get_ticks()
-        self.movement_timer = 0
-        self.change_movement_time = 5000
+        self.__image = image
+        self.__rect = self.__image.get_rect(topleft=(x, y))
+        self.__last_attack_time = pygame.time.get_ticks()
+        self.__x = x
+        self.__y = y
+        self.__target = hero
+        self.__Id = 4
+        self.__health = 1000
+        self.__last_spawn_time = pygame.time.get_ticks()
+        self.__movement_timer = 0
+        self.__change_movement_time = 5000
         self.die_song = pygame.mixer.Sound('assets/Sound/nein.mp3')
 
     def update(self):
@@ -99,7 +159,7 @@ class Boss(Entity):
             print(f"Erreur lors du chargement des données depuis le fichier JSON: {e}")
 
     def draw(self, screen):
-        screen.blit(self.image, self.rect)
+        screen.blit(self.__image, self.__rect)
 
     def attack(self, target, projectiles=None):
         '''
@@ -124,7 +184,7 @@ class Boss(Entity):
         Méthode pour infliger des dégâts au boss
         '''
         self.health -= damage
-        print(f"Boss health: {self.health}")
+        print(self.health)
         if self.health in range(0, 500):
             self.fury_mode = True
 
@@ -149,5 +209,126 @@ class Boss(Entity):
             from main import hero
             count_time = pygame.time.get_ticks()
             if count_time - self.last_spawn_time >= 10000:
+                print('Obstacle spawned by the boss')
                 add_obstacle(hero)
                 self.last_spawn_time = count_time
+
+    @property
+    def fury_mode(self):
+        return self.__fury_mode
+
+    @fury_mode.setter
+    def fury_mode(self, value):
+        self.__fury_mode = value
+
+    @property
+    def resistance(self):
+        return self.__resistance
+
+    @resistance.setter
+    def resistance(self, value):
+        self.__resistance = value
+
+    @property
+    def level(self):
+        return self.__level
+
+    @level.setter
+    def level(self, value):
+        self.__level = value
+
+    @property
+    def image(self):
+        return self.__image
+
+    @image.setter
+    def image(self, value):
+        self.__image = value
+
+    @property
+    def rect(self):
+        return self.__rect
+
+    @rect.setter
+    def rect(self, value):
+        self.__rect = value
+
+    @property
+    def last_attack_time(self):
+        return self.__last_attack_time
+
+    @last_attack_time.setter
+    def last_attack_time(self, value):
+        self.__last_attack_time = value
+
+    @property
+    def x(self):
+        return self.__x
+
+    @x.setter
+    def x(self, value):
+        self.__x = value
+
+    @property
+    def y(self):
+        return self.__y
+
+    @y.setter
+    def y(self, value):
+        self.__y = value
+
+    @property
+    def target(self):
+        return self.__target
+
+    @target.setter
+    def target(self, value):
+        self.__target = value
+
+    @property
+    def Id(self):
+        return self.__Id
+
+    @Id.setter
+    def Id(self, value):
+        self.__Id = value
+
+    @property
+    def health(self):
+        return self.__health
+
+    @health.setter
+    def health(self, value):
+        self.__health = value
+
+    @property
+    def last_spawn_time(self):
+        return self.__last_spawn_time
+
+    @last_spawn_time.setter
+    def last_spawn_time(self, value):
+        self.__last_spawn_time = value
+
+    @property
+    def movement_timer(self):
+        return self.__movement_timer
+
+    @movement_timer.setter
+    def movement_timer(self, value):
+        self.__movement_timer = value
+
+    @property
+    def change_movement_time(self):
+        return self.__change_movement_time
+
+    @change_movement_time.setter
+    def change_movement_time(self, value):
+        self.__change_movement_time = value
+
+    @property
+    def die_song(self):
+        return self.__die_song
+
+    @die_song.setter
+    def die_song(self, value):
+        self.__die_song = value
