@@ -1,33 +1,48 @@
-import os
-import pygame
 import json
-import random
+import pygame
+from Entity import Entity
+from math import sqrt
+from Weapons import *
 
-HAUTEUR, LARGEUR = 1280 , 720
 pygame.init()
+HAUTEUR, LARGEUR = 1280, 720
 
-class Entity(pygame.sprite.Sprite):
-    '''
-    Classe Entity : Classe mère de tous les objets du jeu
-    '''
-    def __init__(self, path):
-        super().__init__()
-        self.speed = 2.5
-        self.is_dead = False
-        self.strength_power = 1
-        self.__health = 100
-        self.max_health = 100
-        self.image = pygame.Surface((75, 75))
-        self.image.fill((255, 0, 0))
-        self.rect = self.image.get_rect()
-        self.rect.center = (HAUTEUR // 2, LARGEUR // 2)
-        self.name = "Entity"
-        self.path = path
-        self.show_player_information = False
-        self.load_from_json(path)
-        self.mouvements = random.choice(["up-down", "down-up", "left-right", "right-left", "carré", "losange", "diagonale"])
-        self.__change_movement_time = 5000
 
+clock = pygame.time.Clock()
+gun = Gun()
+knife = Knife()
+sword = Sword()
+
+class Hero(Entity):
+    '''
+    classe qui permet de creer un hero
+    '''
+    def __init__(self, file_path):
+        super().__init__(path=file_path)
+        self.load_from_json(file_path)
+        self.rage_end_time = 0
+        self.normal_knife_range = 100
+        self.normal_sword_range = 150
+        self.knife_range = self.normal_knife_range
+        self.sword_range = self.normal_sword_range
+        self.__health = 200
+        self.__max_health = 200
+        self.health_bar_lenght = 400
+        self.health_ratio = self.max_health / self.health_bar_lenght
+        self.last_attack_time = pygame.time.get_ticks()
+        self.weapon = gun
+        self.shield = 0
+        self.max_shield = 100
+        self.shield_bar_length = 400
+        self.shield_ratio = self.max_shield / self.shield_bar_length
+        self.shield_state = False
+        self.crosshair_image = pygame.image.load('assets/Graphics/crosshair.png').convert_alpha()
+        self.crosshair_image = pygame.transform.scale(self.crosshair_image, (30, 30))
+        self.crosshair_pos = [0, 0]
+        self.heart_image = pygame.transform.scale((pygame.image.load("assets/Graphics/HUD/HUD_heart.png")), (40, 40))
+        self.shield_image = pygame.transform.scale((pygame.image.load("assets/Graphics/HUD/HUD_shield.png")), (50, 50))
+        self.in_boss_room = False
+        self.mouvements = "perso"
     @property
     def health(self):
         return self.__health
@@ -37,94 +52,144 @@ class Entity(pygame.sprite.Sprite):
         self.__health = value
 
     @property
-    def change_movement_time(self):
-        return self.__change_movement_time
+    def max_health(self):
+        return self.__max_health
 
-    @change_movement_time.setter
-    def change_movement_time(self, value):
-        self.__change_movement_time = value
+    @max_health.setter
+    def max_health(self, value):
+        self.__max_health = value
 
 
-    def change_movement(self):
-        possible_movements = ["up-down", "down-up", "left-right", "right-left", "carré", "losange", "diagonale"]
-        self.mouvements = random.choice(possible_movements)
+    def load_from_json(self, file_path):
+        '''
+        Charge les donnees du hero depuis un fichier JSON
+        '''
+        try:
+            with open(file_path, 'r') as file:
+                hero_data = json.load(file)
+                self.speed = hero_data.get("speed", 2.5)
+                self.bonus = hero_data.get("bonus", [])
+                self.shield = hero_data.get("shield", None)
+                self.image_path = hero_data.get("image_path")
+                if self.image_path:
+                    self.load_entity_image(self.image_path)
+                self.rect = self.image.get_rect()
+                self.rect.center = (HAUTEUR // 2, LARGEUR // 2)
+                self.name = hero_data.get("name", "Hero")
+        except Exception as e:
+            print(f"Error loading hero data from JSON: {e}")
 
-    def move_up_down(self):
-        self.rect.y += self.speed
-        if self.rect.top < 0:
-            self.rect.top = 0
-            self.speed = -self.speed
-        elif self.rect.bottom > HAUTEUR:
-            self.rect.bottom = HAUTEUR
-            self.speed = -self.speed
+    def attack(self, mobs):
+        '''
+        Methode qui permet au hero d'attaquer
+        '''
+        mouse_pressed = pygame.mouse.get_pressed()
+        if mouse_pressed[0]:
+            current_time = pygame.time.get_ticks()
+            if current_time - self.last_attack_time >= 1000:
+                if isinstance(self.weapon, Knife):
+                    for mob in mobs:
+                        dist = sqrt((self.rect.x - mob.rect.x) ** 2 + (self.rect.y - mob.rect.y) ** 2)
+                        if dist <= self.knife_range:
+                            mob.hurt(20, mobs)
+                elif isinstance(self.weapon, Sword):
+                    for mob in mobs:
+                        dist = sqrt((self.rect.x - mob.rect.x) ** 2 + (self.rect.y - mob.rect.y) ** 2)
+                        if dist <= self.sword_range:
+                            mob.hurt(self.weapon.damage, mobs)
+                elif isinstance(self.weapon, Gun):
+                    self.weapon.fire(self, mobs)
+                self.last_attack_time = current_time
 
-    def move_left_right(self):
-        self.rect.x += self.speed
-        if self.rect.left < 0:
-            self.rect.left = 0
-            self.speed = -self.speed
-        elif self.rect.right > LARGEUR:
-            self.rect.right = LARGEUR
-            self.speed = -self.speed
-
-    def move_square(self):
-        self.rect.x += self.speed
-        self.rect.y += self.speed
-        if self.rect.left < 0 or self.rect.right > LARGEUR or self.rect.top < 0 or self.rect.bottom > HAUTEUR:
-            self.speed = -self.speed
-
-    def move_losange(self):
-        if self.rect.left <= 0 or self.rect.right >= LARGEUR or self.rect.top <= 0 or self.rect.bottom >= HAUTEUR:
-            self.speed = -self.speed
-        if self.speed > 0:
-            if self.rect.left > LARGEUR // 2:
-                self.rect.x -= self.speed
-                self.rect.y += self.speed
-            else:
-                self.rect.x += self.speed
-                self.rect.y -= self.speed
+    def hurt(self, damage):
+        global hero_status
+        '''
+        Methode qui permet au hero de subir des degats
+        '''
+        if self.shield_state and self.shield > 0:
+            self.shield -= damage
         else:
-            if self.rect.left > LARGEUR // 2:
-                self.rect.x += self.speed
-                self.rect.y -= self.speed
-            else:
-                self.rect.x -= self.speed
-                self.rect.y += self.speed
+            self.shield_state = False
+            self.health -= damage
+            print(f"Hero health: {self.health}") if damage > 0 else None
+            if self.health <= 0:
+                return "dead"
 
-    def move_diagonal(self):
-        self.rect.x += self.speed
-        self.rect.y += self.speed
-        if self.rect.left < 0:
-            self.rect.left = 0
-            self.speed = -self.speed
-        elif self.rect.right > LARGEUR:
-            self.rect.right = LARGEUR
-            self.speed = -self.speed
-        elif self.rect.top < 0:
-            self.rect.top = 0
-            self.speed = -self.speed
-        elif self.rect.bottom > HAUTEUR:
-            self.rect.bottom = HAUTEUR
-            self.speed = -self.speed
 
-    def update(self):
-        super().update()
-        if self.movement_timer < self.change_movement_time:
-            self.movement_timer += pygame.time.get_ticks()
-        else:
-            self.change_movement()
-            self.movement_timer = 0
+    def basic_health(self):
+        '''
+        Methode qui permet d'afficher la barre de vie du hero
+        '''
+        from main import screen
+        pygame.draw.rect(screen, (255, 0, 0), (45, 10, self.health/self.health_ratio, 25))
+        pygame.draw.rect(screen, (0, 0, 0), (45 ,10, self.health_bar_lenght,25), 2)
 
-        if self.mouvements in ["up-down", "down-up"]:
-            self.move_up_down()
-        elif self.mouvements in ["left-right", "right-left"]:
-            self.move_left_right()
-        elif self.mouvements == "carré":
-            self.move_square()
-        elif self.mouvements == "losange":
-            self.move_losange()
-        elif self.mouvements == "diagonale":
-            self.move_diagonal()
+
+    def basic_shield(self):
+        '''
+        Methode qui permet d'afficher la barre de bouclier du hero
+        '''
+        from main import screen
+        pygame.draw.rect(screen, (0, 0, 255), (45, 60, self.shield/self.shield_ratio, 25))
+        pygame.draw.rect(screen, (0, 0, 0), (45 ,60, self.shield_bar_length,25), 2)
+
+
+    def update(self, mobs, obstacles):
+        self.basic_health()
+        if self.shield > 0:
+            self.basic_shield()
+        self.check_obstacle_collision(obstacles)
+        self.check_rage_end()
+        self.rotate_to_mouse()
+        self.move()
+
+    def rotate_to_mouse(self):
+        '''
+        Methode qui permet de faire tourner le reticule du gun
+        en direction de la souris
+        '''
+        mouse_pos = pygame.mouse.get_pos()
+
+        rel_x, rel_y = mouse_pos[0] - self.rect.centerx, mouse_pos[1] - self.rect.centery
+        angle = (180 / math.pi) * math.atan2(rel_y, rel_x)
+
+        crosshair_distance = 60
+        self.crosshair_pos[0] = self.rect.centerx + crosshair_distance * math.cos(math.radians(angle))
+        self.crosshair_pos[1] = self.rect.centery + crosshair_distance * math.sin(math.radians(angle))
+
+
+    def check_obstacle_collision(self, obstacles):
+        '''
+        Methode qui permet de verifier si le hero entre en collision
+        Avec un obstacle et applique l'effet de l'obstacle
+        '''
+        for obstacle in obstacles:
+            if self.rect.colliderect(obstacle.rect):
+                obstacle.apply_effect(self)
+                obstacles.remove(obstacle)
+
+    def check_rage_end(self):
+        '''
+        Methode qui permet de verifier si la rage du hero est termin
+        '''
+        if pygame.time.get_ticks() > self.rage_end_time:
+            self.knife_range = self.normal_knife_range
+            self.sword_range = self.normal_sword_range
+
+    def draw(self, screen):
+        if isinstance(self.weapon, Gun):
+            screen.blit(self.crosshair_image, (self.crosshair_pos[0], self.crosshair_pos[1]))
+
+    def move(self):
+        key = pygame.key.get_pressed()
+        if key[pygame.K_LEFT] or key[pygame.K_q]:
+            self.rect.x -= self.speed
+        if key[pygame.K_RIGHT] or key[pygame.K_d]:
+            self.rect.x += self.speed
+        if key[pygame.K_UP] or key[pygame.K_z]:
+            self.rect.y -= self.speed
+        if key[pygame.K_DOWN] or key[pygame.K_s]:
+            self.rect.y += self.speed
         if self.rect.x < 50:
             self.rect.x = 50
         if self.rect.y < 0:
@@ -133,49 +198,3 @@ class Entity(pygame.sprite.Sprite):
             self.rect.x = HAUTEUR - self.rect.width -50
         if self.rect.y > LARGEUR - self.rect.height - 50:
             self.rect.y = LARGEUR - self.rect.height - 50
-
-
-
-
-
-    def show_informations(self):
-        self.show_player_information = not self.show_player_information
-
-    def load_from_json(self, file_path):
-        '''
-        Charge les données depuis un fichier JSON
-        '''
-        try:
-            with open(file_path, 'r') as file:
-                player_data_from_json = json.load(file)
-                self.speed = player_data_from_json.get("speed", self.speed)
-                self.strength_power = player_data_from_json.get("strength_power", self.strength_power)
-                self.health = player_data_from_json.get("health", self.health)
-                self.max_health = player_data_from_json.get("max_health", self.max_health)
-                self.is_dead = player_data_from_json.get("True", self.is_dead)
-                image_path = player_data_from_json.get("image_path")
-                if image_path is not None or os.path.exists(image_path):
-                    self.load_entity_image(image_path)
-                if self.image:
-                    self.rect = self.image.get_rect()
-                    self.rect.center = (HAUTEUR // 2, LARGEUR // 2)
-                self.name = player_data_from_json.get("name", "Entity")
-        except FileNotFoundError:
-            print(f"Erreur : fichier JSON introuvable - {file_path}")
-        except json.JSONDecodeError:
-            print(f"Erreur : fichier JSON malformé - {file_path}")
-        except Exception as e:
-            print(f"Erreur lors du chargement des données depuis le fichier JSON: {e}")
-
-    def load_entity_image(self, image_path):
-        '''
-        Charge l'image de l'entité
-        '''
-        try:
-            self.image = pygame.image.load(image_path).convert_alpha()
-            self.image = pygame.transform.scale(self.image, (75, 75))
-        except pygame.error as e:
-            print(f"Erreur lors du chargement de l'image : {image_path}: {e}")
-            self.image = pygame.Surface((75, 75))
-            self.image.fill((255, 0, 0))
-
