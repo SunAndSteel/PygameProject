@@ -15,7 +15,7 @@ sword = Sword()
 
 class Hero(Entity):
     '''
-    Classe Hero : Classe représentant le héros du jeu
+    classe qui permet de creer un hero
     '''
     def __init__(self, file_path):
         super().__init__(path=file_path)
@@ -25,8 +25,8 @@ class Hero(Entity):
         self.normal_sword_range = 150
         self.knife_range = self.normal_knife_range
         self.sword_range = self.normal_sword_range
-        self.health = 200
-        self.max_health = 200
+        self.__health = 200
+        self.__max_health = 200
         self.health_bar_lenght = 400
         self.health_ratio = self.max_health / self.health_bar_lenght
         self.last_attack_time = pygame.time.get_ticks()
@@ -36,7 +36,6 @@ class Hero(Entity):
         self.shield_bar_length = 400
         self.shield_ratio = self.max_shield / self.shield_bar_length
         self.shield_state = False
-        # charger les image
         self.crosshair_image = pygame.image.load('assets/Graphics/crosshair.png').convert_alpha()
         self.crosshair_image = pygame.transform.scale(self.crosshair_image, (30, 30))
         self.crosshair_pos = [0, 0]
@@ -44,12 +43,26 @@ class Hero(Entity):
         self.shield_image = pygame.transform.scale((pygame.image.load("assets/Graphics/HUD/HUD_shield.png")), (50, 50))
         self.in_boss_room = False
         self.mouvements = "perso"
+    @property
+    def health(self):
+        return self.__health
 
+    @health.setter
+    def health(self, value):
+        self.__health = value
+
+    @property
+    def max_health(self):
+        return self.__max_health
+
+    @max_health.setter
+    def max_health(self, value):
+        self.__max_health = value
 
 
     def load_from_json(self, file_path):
         '''
-        Méthode pour charger les données du héros depuis un fichier JSON
+        Charge les donnees du hero depuis un fichier JSON
         '''
         try:
             with open(file_path, 'r') as file:
@@ -68,8 +81,7 @@ class Hero(Entity):
 
     def attack(self, mobs):
         '''
-        Méthode pour attaquer les ennemis avec l'arme du héros
-        L'arme peut être un couteau, une épée ou un pistolet
+        Methode qui permet au hero d'attaquer
         '''
         mouse_pressed = pygame.mouse.get_pressed()
         if mouse_pressed[0]:
@@ -90,21 +102,23 @@ class Hero(Entity):
                 self.last_attack_time = current_time
 
     def hurt(self, damage):
+        global hero_status
         '''
-        Méthode pour infliger des dégâts au héros
+        Methode qui permet au hero de subir des degats
         '''
         if self.shield_state and self.shield > 0:
             self.shield -= damage
         else:
             self.shield_state = False
             self.health -= damage
-            print(f"Hero health: {self.health}")
+            print(f"Hero health: {self.health}") if damage > 0 else None
             if self.health <= 0:
-                pygame.quit()
+                return "dead"
+
 
     def basic_health(self):
         '''
-        Méthode pour afficher la barre de vie du héros
+        Methode qui permet d'afficher la barre de vie du hero
         '''
         from main import screen
         pygame.draw.rect(screen, (255, 0, 0), (45, 10, self.health/self.health_ratio, 25))
@@ -113,7 +127,7 @@ class Hero(Entity):
 
     def basic_shield(self):
         '''
-        Méthode pour afficher la barre de bouclier du héros
+        Methode qui permet d'afficher la barre de bouclier du hero
         '''
         from main import screen
         pygame.draw.rect(screen, (0, 0, 255), (45, 60, self.shield/self.shield_ratio, 25))
@@ -131,10 +145,9 @@ class Hero(Entity):
 
     def rotate_to_mouse(self):
         '''
-        Méthode pour faire tourner le reticule selon la position de la souris
-        Fait en sorte que le reticule soit toujours en face de la souris
+        Methode qui permet de faire tourner le reticule du gun
+        en direction de la souris
         '''
-
         mouse_pos = pygame.mouse.get_pos()
 
         rel_x, rel_y = mouse_pos[0] - self.rect.centerx, mouse_pos[1] - self.rect.centery
@@ -147,7 +160,8 @@ class Hero(Entity):
 
     def check_obstacle_collision(self, obstacles):
         '''
-        Méthode pour vérifier les collisions avec les obstacles
+        Methode qui permet de verifier si le hero entre en collision
+        Avec un obstacle et applique l'effet de l'obstacle
         '''
         for obstacle in obstacles:
             if self.rect.colliderect(obstacle.rect):
@@ -156,7 +170,7 @@ class Hero(Entity):
 
     def check_rage_end(self):
         '''
-        Méthode pour vérifier si la rage est terminée
+        Methode qui permet de verifier si la rage du hero est termin
         '''
         if pygame.time.get_ticks() > self.rage_end_time:
             self.knife_range = self.normal_knife_range
@@ -184,4 +198,3 @@ class Hero(Entity):
             self.rect.x = HAUTEUR - self.rect.width -50
         if self.rect.y > LARGEUR - self.rect.height - 50:
             self.rect.y = LARGEUR - self.rect.height - 50
-
