@@ -8,14 +8,14 @@ pygame.init()
 
 class Entity(pygame.sprite.Sprite):
     '''
-    Classe Entity : Classe mère de tous les personnages du jeu
+    Classe Entity : Classe mère de tous les objets du jeu
     '''
     def __init__(self, path):
         super().__init__()
         self.speed = 2.5
         self.is_dead = False
         self.strength_power = 1
-        self.health = 100
+        self.__health = 100
         self.max_health = 100
         self.image = pygame.Surface((75, 75))
         self.image.fill((255, 0, 0))
@@ -26,13 +26,26 @@ class Entity(pygame.sprite.Sprite):
         self.show_player_information = False
         self.load_from_json(path)
         self.mouvements = random.choice(["up-down", "down-up", "left-right", "right-left", "carré", "losange", "diagonale"])
-        self.change_movement_time = 5000
+        self.__change_movement_time = 5000
+
+    @property
+    def health(self):
+        return self.__health
+
+    @health.setter
+    def health(self, value):
+        self.__health = value
+
+    @property
+    def change_movement_time(self):
+        return self.__change_movement_time
+
+    @change_movement_time.setter
+    def change_movement_time(self, value):
+        self.__change_movement_time = value
 
 
     def change_movement(self):
-        '''
-        Méthode pour changer le mouvement de l'entité après un certain temps
-        '''
         possible_movements = ["up-down", "down-up", "left-right", "right-left", "carré", "losange", "diagonale"]
         self.mouvements = random.choice(possible_movements)
 
@@ -95,9 +108,6 @@ class Entity(pygame.sprite.Sprite):
             self.speed = -self.speed
 
     def update(self):
-        '''
-        Méthode pour mettre à jour l'entité
-        '''
         super().update()
         if self.movement_timer < self.change_movement_time:
             self.movement_timer += pygame.time.get_ticks()
@@ -129,14 +139,11 @@ class Entity(pygame.sprite.Sprite):
 
 
     def show_informations(self):
-        '''
-        Méthode pour afficher les informations de l'entité
-        '''
         self.show_player_information = not self.show_player_information
 
     def load_from_json(self, file_path):
         '''
-        Méthode pour charger les données de l'entité depuis un fichier JSON
+        Charge les données depuis un fichier JSON
         '''
         try:
             with open(file_path, 'r') as file:
@@ -162,7 +169,7 @@ class Entity(pygame.sprite.Sprite):
 
     def load_entity_image(self, image_path):
         '''
-        Méthode pour charger l'image de l'entité
+        Charge l'image de l'entité
         '''
         try:
             self.image = pygame.image.load(image_path).convert_alpha()
@@ -171,5 +178,4 @@ class Entity(pygame.sprite.Sprite):
             print(f"Erreur lors du chargement de l'image : {image_path}: {e}")
             self.image = pygame.Surface((75, 75))
             self.image.fill((255, 0, 0))
-
 
