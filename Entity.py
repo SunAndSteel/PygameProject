@@ -1,200 +1,257 @@
-import json
 import pygame
-from Entity import Entity
-from math import sqrt
+from sys import exit
+from Menu_button import Button
+from Hero import Hero
+from Mob_spawn import add_mob, mobs, obstacles, add_boss, add_obstacle
 from Weapons import *
+from Obstacle import *
+from Boss import *
+from Mob import *
+from Door_exit import ExitDoor
 
 pygame.init()
-HAUTEUR, LARGEUR = 1280, 720
 
+music = pygame.mixer.music.load("assets/Sound/game track.mp3")
+pygame.mixer.music.play(-1)
+pygame.mixer.music.set_volume(0.1)
 
-clock = pygame.time.Clock()
-gun = Gun()
-knife = Knife()
-sword = Sword()
+width, height = 1280, 720
 
-class Hero(Entity):
+screen = pygame.display.set_mode((width, height))
+pygame.display.set_caption("Binding of Isaac")
+
+fps = pygame.time.Clock()
+pause = False
+font = pygame.font.Font('assets/font/Hammer God Font DEMO.ttf', 36)
+
+BG = pygame.image.load("assets/Graphics/background.png")
+BG = pygame.transform.scale(BG, (width, height))
+
+hero = Hero("Entitys/Mobs/Hero/hero.json")
+all_sprites = pygame.sprite.Group()
+all_sprites.add(hero)
+projectiles = pygame.sprite.Group()
+
+level = 1
+old_level = level
+etage = 1
+
+def pause_menu(screen, paused):
     '''
-    classe qui permet de creer un hero
+    fonction qui affiche le menu pause
+    les options sont: resume, save, quit
     '''
-    def __init__(self, file_path):
-        super().__init__(path=file_path)
-        self.load_from_json(file_path)
-        self.rage_end_time = 0
-        self.normal_knife_range = 100
-        self.normal_sword_range = 150
-        self.knife_range = self.normal_knife_range
-        self.sword_range = self.normal_sword_range
-        self.__health = 200
-        self.__max_health = 200
-        self.health_bar_lenght = 400
-        self.health_ratio = self.max_health / self.health_bar_lenght
-        self.last_attack_time = pygame.time.get_ticks()
-        self.weapon = gun
-        self.shield = 0
-        self.max_shield = 100
-        self.shield_bar_length = 400
-        self.shield_ratio = self.max_shield / self.shield_bar_length
-        self.shield_state = False
-        self.crosshair_image = pygame.image.load('assets/Graphics/crosshair.png').convert_alpha()
-        self.crosshair_image = pygame.transform.scale(self.crosshair_image, (30, 30))
-        self.crosshair_pos = [0, 0]
-        self.heart_image = pygame.transform.scale((pygame.image.load("assets/Graphics/HUD/HUD_heart.png")), (40, 40))
-        self.shield_image = pygame.transform.scale((pygame.image.load("assets/Graphics/HUD/HUD_shield.png")), (50, 50))
-        self.in_boss_room = False
-        self.mouvements = "perso"
-    @property
-    def health(self):
-        return self.__health
+    resume_button = Button(image=None, pos=(width // 2, height // 2 - 100), text_input='Press r to Resume', font=font, base_color=(255, 255, 255), hovering_color='Green')
+    save_button = Button(image=None, pos=(width // 2, height // 2), text_input='Press s to Save', font=font, base_color=(255, 255, 255), hovering_color='Green')
+    quit_button = Button(image=None, pos=(width // 2, height // 2 + 100), text_input='Press q to Quit', font=font, base_color=(255, 255, 255), hovering_color='Green')
 
-    @health.setter
-    def health(self, value):
-        self.__health = value
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if resume_button.checkForInput(pygame.mouse.get_pos()):
+                    return
+                if save_button.checkForInput(pygame.mouse.get_pos()):
+                    save_game()
+                if quit_button.checkForInput(pygame.mouse.get_pos()):
+                    pygame.quit()
+                    exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    return
+                if event.key == pygame.K_s:
+                    save_game()
+                if event.key == pygame.K_q:
+                    pygame.quit()
+                    exit()
 
-    @property
-    def max_health(self):
-        return self.__max_health
+        screen.blit(paused, (0, 0))
+        resume_button.update(screen)
+        save_button.update(screen)
+        quit_button.update(screen)
 
-    @max_health.setter
-    def max_health(self, value):
-        self.__max_health = value
+        pygame.display.update()
+        fps.tick(60)
 
+def save_game():
+    pass
 
-    def load_from_json(self, file_path):
-        '''
-        Charge les donnees du hero depuis un fichier JSON
-        '''
-        try:
-            with open(file_path, 'r') as file:
-                hero_data = json.load(file)
-                self.speed = hero_data.get("speed", 2.5)
-                self.bonus = hero_data.get("bonus", [])
-                self.shield = hero_data.get("shield", None)
-                self.image_path = hero_data.get("image_path")
-                if self.image_path:
-                    self.load_entity_image(self.image_path)
-                self.rect = self.image.get_rect()
-                self.rect.center = (HAUTEUR // 2, LARGEUR // 2)
-                self.name = hero_data.get("name", "Hero")
-        except Exception as e:
-            print(f"Error loading hero data from JSON: {e}")
+def draw_text(text, font, color, surface, x, y):
+    '''
+    fonction qui affiche du texte sur l'ecran
+    '''
+    textobj = font.render(text, True, color)
+    textrect = textobj.get_rect()
+    textrect.topleft = (x, y)
+    surface.blit(textobj, textrect)
 
-    def attack(self, mobs):
-        '''
-        Methode qui permet au hero d'attaquer
-        '''
-        mouse_pressed = pygame.mouse.get_pressed()
-        if mouse_pressed[0]:
-            current_time = pygame.time.get_ticks()
-            if current_time - self.last_attack_time >= 1000:
-                if isinstance(self.weapon, Knife):
-                    for mob in mobs:
-                        dist = sqrt((self.rect.x - mob.rect.x) ** 2 + (self.rect.y - mob.rect.y) ** 2)
-                        if dist <= self.knife_range:
-                            mob.hurt(20, mobs)
-                elif isinstance(self.weapon, Sword):
-                    for mob in mobs:
-                        dist = sqrt((self.rect.x - mob.rect.x) ** 2 + (self.rect.y - mob.rect.y) ** 2)
-                        if dist <= self.sword_range:
-                            mob.hurt(self.weapon.damage, mobs)
-                elif isinstance(self.weapon, Gun):
-                    self.weapon.fire(self, mobs)
-                self.last_attack_time = current_time
+def main_menu(screen):
+    '''
+    fonction qui affiche le menu principal
+    les options sont: new game, load game
+    '''
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_n:
+                    return 'new'
+                elif event.key == pygame.K_l:
+                    return 'load'
 
-    def hurt(self, damage):
-        global hero_status
-        '''
-        Methode qui permet au hero de subir des degats
-        '''
-        if self.shield_state and self.shield > 0:
-            self.shield -= damage
-        else:
-            self.shield_state = False
-            self.health -= damage
-            print(f"Hero health: {self.health}") if damage > 0 else None
-            if self.health <= 0:
-                return "dead"
+        screen.fill((0, 0, 0))
+        draw_text('MAIN MENU', font, (255, 255, 255), screen, width // 2 - 100, height // 2 - 200)
+        draw_text('Press N for New Game', font, (255, 255, 255), screen, width // 2 - 150, height // 2 - 100)
+        draw_text('Press L to Load Game', font, (255, 255, 255), screen, width // 2 - 150, height // 2)
 
+        pygame.display.update()
+        fps.tick(60)
 
-    def basic_health(self):
-        '''
-        Methode qui permet d'afficher la barre de vie du hero
-        '''
-        from main import screen
-        pygame.draw.rect(screen, (255, 0, 0), (45, 10, self.health/self.health_ratio, 25))
-        pygame.draw.rect(screen, (0, 0, 0), (45 ,10, self.health_bar_lenght,25), 2)
+def game(screen, pause=False):
+    '''
+    fonction qui gere le jeu
+    '''
+    global level, old_level, etage, mobs, obstacles, exit_door, BG
+    boss_spawned = False
+    exit_door = None
+    current_room = "room1"
+    next_room_position = None
 
+    BG = pygame.image.load("assets/Graphics/background.png")
+    BG = pygame.transform.scale(BG, (width, height))
 
-    def basic_shield(self):
-        '''
-        Methode qui permet d'afficher la barre de bouclier du hero
-        '''
-        from main import screen
-        pygame.draw.rect(screen, (0, 0, 255), (45, 60, self.shield/self.shield_ratio, 25))
-        pygame.draw.rect(screen, (0, 0, 0), (45 ,60, self.shield_bar_length,25), 2)
+    if hero.in_boss_room:
+        if not boss_spawned and len(mobs) == 0:
+            add_boss(hero)
+            boss_spawned = True
+    else:
+        while len(mobs) < 5:
+            add_mob(hero)
+    while len(obstacles) < 2:
+        add_obstacle(hero)
 
+    def spawn_exit_door():
+        positions = ["top", "bottom", "left", "right"]
+        position = random.choice(positions)
+        return ExitDoor(position)
 
-    def update(self, mobs, obstacles):
-        self.basic_health()
-        if self.shield > 0:
-            self.basic_shield()
-        self.check_obstacle_collision(obstacles)
-        self.check_rage_end()
-        self.rotate_to_mouse()
-        self.move()
+    exit_door = spawn_exit_door()
 
-    def rotate_to_mouse(self):
-        '''
-        Methode qui permet de faire tourner le reticule du gun
-        en direction de la souris
-        '''
-        mouse_pos = pygame.mouse.get_pos()
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_p:
+                    pygame.image.save(screen, 'pause.png')
+                    screenshot = pygame.image.load('pause.png')
+                    grey_screenshot = pygame.Surface(screenshot.get_size())
+                    for x in range(screenshot.get_width()):
+                        for y in range(screenshot.get_height()):
+                            r, g, b, a = screenshot.get_at((x, y))
+                            grey = int(0.299 * r + 0.587 * g + 0.114 * b)
+                            grey_screenshot.set_at((x, y), (grey, grey, grey, a))
+                    pause_menu(screen, grey_screenshot)
 
-        rel_x, rel_y = mouse_pos[0] - self.rect.centerx, mouse_pos[1] - self.rect.centery
-        angle = (180 / math.pi) * math.atan2(rel_y, rel_x)
+        screen.blit(BG, (0, 0))
 
-        crosshair_distance = 60
-        self.crosshair_pos[0] = self.rect.centerx + crosshair_distance * math.cos(math.radians(angle))
-        self.crosshair_pos[1] = self.rect.centery + crosshair_distance * math.sin(math.radians(angle))
+        if len(mobs) == 0:
+            if hero.rect.colliderect(exit_door.rect):
+                if exit_door.rect.center == (width // 2, 0):
+                    next_room_position = "bottom"
+                elif exit_door.rect.center == (width // 2, height):
+                    next_room_position = "top"
+                elif exit_door.rect.center == (0, height // 2):
+                    next_room_position = "right"
+                elif exit_door.rect.center == (width, height // 2):
+                    next_room_position = "left"
 
+                level += 1
+                if level > old_level:
+                    if etage == 1:
+                        BG = pygame.image.load("assets/Graphics/background.png")
+                        BG = pygame.transform.scale(BG, (width, height))
+                    if level == 10:
+                        add_boss(hero)
+                        old_level = level
+                        BG = pygame.image.load("assets/Graphics/boss_background.png")
+                        BG = pygame.transform.scale(BG, (width, height))
+                    else:
+                        old_level = level
+                        mobs = []
+                        obstacles = []
+                        for _ in range(5):
+                            add_mob(hero)
+                        for _ in range(2):
+                            add_obstacle(hero)
+                    exit_door = spawn_exit_door()
 
-    def check_obstacle_collision(self, obstacles):
-        '''
-        Methode qui permet de verifier si le hero entre en collision
-        Avec un obstacle et applique l'effet de l'obstacle
-        '''
+        for mob in mobs:
+            mob.attack(hero, projectiles)
+            mob.update()
+            mob.draw(screen)
+            if isinstance(mob, Boss):
+                mob.attack(hero, projectiles)
+                mob.update()
+
+        hero.attack(mobs)
+        hero.update(mobs, obstacles)
+        projectiles.update()
+
+        for projectile in projectiles:
+            if hero.rect.colliderect(projectile.rect):
+                hero.hurt(20)
+                projectile.kill()
+
+        for sprite in all_sprites:
+            if sprite != hero:
+                sprite.update()
+        all_sprites.draw(screen)
+
+        for mob in mobs:
+            mob.draw(screen)
+
         for obstacle in obstacles:
-            if self.rect.colliderect(obstacle.rect):
-                obstacle.apply_effect(self)
-                obstacles.remove(obstacle)
+            obstacle.draw(screen)
 
-    def check_rage_end(self):
-        '''
-        Methode qui permet de verifier si la rage du hero est termin
-        '''
-        if pygame.time.get_ticks() > self.rage_end_time:
-            self.knife_range = self.normal_knife_range
-            self.sword_range = self.normal_sword_range
+        for projectiled in projectiles:
+            projectiled.draw(screen)
 
-    def draw(self, screen):
-        if isinstance(self.weapon, Gun):
-            screen.blit(self.crosshair_image, (self.crosshair_pos[0], self.crosshair_pos[1]))
+        if hero.weapon == gun:
+            hero.weapon.update(screen, mobs)
 
-    def move(self):
-        key = pygame.key.get_pressed()
-        if key[pygame.K_LEFT] or key[pygame.K_q]:
-            self.rect.x -= self.speed
-        if key[pygame.K_RIGHT] or key[pygame.K_d]:
-            self.rect.x += self.speed
-        if key[pygame.K_UP] or key[pygame.K_z]:
-            self.rect.y -= self.speed
-        if key[pygame.K_DOWN] or key[pygame.K_s]:
-            self.rect.y += self.speed
-        if self.rect.x < 50:
-            self.rect.x = 50
-        if self.rect.y < 0:
-            self.rect.y = 0
-        if self.rect.x > HAUTEUR - self.rect.width - 50:
-            self.rect.x = HAUTEUR - self.rect.width -50
-        if self.rect.y > LARGEUR - self.rect.height - 50:
-            self.rect.y = LARGEUR - self.rect.height - 50
+        hero.draw(screen)
+        screen.blit(hero.heart_image, (2, 2))
+
+        if hero.shield > 0:
+            screen.blit(hero.shield_image, (0, 50))
+
+        exit_door.draw(screen)
+
+        hero_status = hero.hurt(0)
+        if hero_status == 'dead':
+            pygame.mixer.music.stop()
+            screen.fill((0, 0, 0))
+            draw_text('GAME OVER', font, (255, 255, 255), screen, width / 2 - 100, height / 2 - 50 )
+            draw_text('Press q to quit', font, (255, 255, 255), screen, width / 2 - 100, height / 2 )
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_q:
+                        pygame.quit()
+                        exit()
+
+        pygame.display.update()
+        fps.tick(120)
+
+
+
+main_menu(screen)
