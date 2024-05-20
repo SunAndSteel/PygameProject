@@ -16,23 +16,79 @@ mort = False
 
 class Mob(Boss):
     '''
-    Classe Mob : Classe représentant les ennemis du jeu
+    Cette classe représente les mobs dans le jeu
     '''
-    def __init__(self, image, x, y, target,Id=2 ):
+    def __init__(self, image, x, y, target, Id=2):
         super().__init__(image, x, y, target)
-        self.health = 100
-        self.level = 50
-        self.Id = Id
-        self.x = x
-        self.y = y
-        self.target = target
+        self.__health = 100
+        self.__level = 50
+        self.__Id = Id
+        self.__x = x
+        self.__y = y
+        self.__target = target
         self.image = image
         self.rect = self.image.get_rect(topleft=(x, y))
-        self.last_attack_time = pygame.time.get_ticks()
+        self.__last_attack_time = pygame.time.get_ticks()
+
+    @property
+    def health(self):
+        return self.__health
+
+    @health.setter
+    def health(self, value):
+        self.__health = value
+
+    @property
+    def level(self):
+        return self.__level
+
+    @level.setter
+    def level(self, value):
+        self.__level = value
+
+    @property
+    def Id(self):
+        return self.__Id
+
+    @Id.setter
+    def Id(self, value):
+        self.__Id = value
+
+    @property
+    def x(self):
+        return self.__x
+
+    @x.setter
+    def x(self, value):
+        self.__x = value
+
+    @property
+    def y(self):
+        return self.__y
+
+    @y.setter
+    def y(self, value):
+        self.__y = value
+
+    @property
+    def target(self):
+        return self.__target
+
+    @target.setter
+    def target(self, value):
+        self.__target = value
+
+    @property
+    def last_attack_time(self):
+        return self.__last_attack_time
+
+    @last_attack_time.setter
+    def last_attack_time(self, value):
+        self.__last_attack_time = value
 
     def hurt(self, damage, mobs):
         '''
-        Méthode pour infliger des dégâts à un mob
+        Cette méthode permet de réduire la vie du mob
         '''
         self.health -= damage
         print(f"Mob health: {self.health}")
@@ -41,7 +97,7 @@ class Mob(Boss):
 
     def shoot(self):
         '''
-        Méthode pour faire tirer un projectile par le mob
+        cette méthode permet de faire tirer les mobs
         '''
         from main import projectiles
         current_time = pygame.time.get_ticks()
@@ -52,7 +108,7 @@ class Mob(Boss):
 
     def kill(self, mobs):
         '''
-        Méthode pour tuer un mob
+        Cette méthode permet de tuer un mob
         '''
         # from main import dropped_weapons
         # random_number = 2
@@ -74,11 +130,6 @@ class Mob(Boss):
         # return self.rect.x, self.rect.y
 
     def update(self):
-        '''
-        Méthode pour mettre à jour les mobs
-        Si l'id du mob est 2 ou 3, il va tirer un projectile
-        Si l'id du mob est 1, il va attaquer au corp a corp
-        '''
         if self.Id == 2 or self.Id == 3:
             self.shoot()
         if self.Id == 1:
@@ -92,7 +143,7 @@ class Mob(Boss):
 
     def intersects(self, other):
         '''
-        Méthode pour vérifier si un mob est en collision avec un autre objet
+        Cette méthode permet de vérifier si un mob est en collision avec un autre objet
         '''
         return self.rect.colliderect(other.rect)
 
@@ -105,9 +156,6 @@ class Mob(Boss):
     #         mort = True
 
     def show_informations(self):
-        '''
-        Méthode pour afficher les informations du mob
-        '''
         super().show_informations()
         if self.show_player_information:
             info_surface = pygame.Surface((200, 50))
@@ -121,4 +169,3 @@ class Mob(Boss):
                 info_surface.blit(pygame.font.SysFont(None, 20).render(text, True, (255, 255, 255)), (10, i * 20))
             screen.blit(info_surface, (self.rect.x, self.rect.y - 50))
             pygame.display.flip()
-
