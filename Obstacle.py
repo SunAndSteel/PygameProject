@@ -5,7 +5,7 @@ pygame.init()
 
 class Obstacle(pygame.sprite.Sprite):
     '''
-    Classe Obstacle : Classe représentant les obstacles que le héros peut rencontrer
+    Classe Obstacle qui va créer les bonus et les malus du jeu
     '''
     def __init__(self, image, x, y, effect):
         super().__init__()
@@ -15,7 +15,7 @@ class Obstacle(pygame.sprite.Sprite):
 
     def intersects(self, other):
         '''
-        Cette fonction vérifie si l'obstacle est en collision avec un autre objet
+        Fonction qui vérifie si le joueur touche un bonus ou un malus
         '''
         return self.rect.colliderect(other.rect)
 
@@ -24,7 +24,7 @@ class Obstacle(pygame.sprite.Sprite):
 
     def apply_effect(self, hero):
         '''
-        Méthode pour appliquer l'effet de l'obstacle sur le héros
+        Fonction qui applique l'effet du bonus ou du malus sur le joueur
         '''
         if self.effect == 'heal':
             if hero.health < hero.max_health:
@@ -41,9 +41,8 @@ class Obstacle(pygame.sprite.Sprite):
         elif self.effect == 'rage':
             hero.knife_range += 100
             hero.sword_range += 100
-            hero.rage_end_time = pygame.time.get_ticks() + 10000  # 10 seconds from now
+            hero.rage_end_time = pygame.time.get_ticks() + 10000
             print(f"Hero attack range: {hero.knife_range} {hero.sword_range}")
         elif self.effect == 'unheal':
-            print("ouileaaaaaa")
             hero.hurt(10)
             print(f"Hero health: {hero.health}")
