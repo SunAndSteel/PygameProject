@@ -6,14 +6,15 @@ from Boss import Boss
 
 
 pygame.init()
-
 mobs = []
 obstacles = []
 screen = pygame.display.set_mode((1280, 720))
 
+
 '''
-Création de toute les images des mobs et des obstacles
+Création des images des mobs, boss et obstacles
 '''
+
 mini_hitter = pygame.image.load("assets/Graphics/Mobs/minihitler.png").convert_alpha()
 mini_hitter = pygame.transform.scale(mini_hitter, (100, 100))
 Soldier = pygame.image.load("assets/Graphics/Mobs/solider.png").convert_alpha()
@@ -40,8 +41,7 @@ Hitler_boss = pygame.transform.scale(Hitler_boss, (200, 200))
 
 def add_obstacle(hero, max_obstacles=2):
     '''
-    Fonction pour ajouter un obstacle, un bonus ou un malus
-    L'obstacle ne doit pas être trop proche du héros
+    Ajoute un obstacle à la liste des obstacles
     '''
     global obstacles
     min_distance_from_hero = 200
@@ -66,8 +66,7 @@ def add_obstacle(hero, max_obstacles=2):
 
 def add_mob(hero):
     '''
-    Fonction pour ajouter un mob, le mob ne doit pas
-    être trop proche du héros ou d'un autre mob
+    Ajoute un mob à la liste des mobs
     '''
     global mobs
     from main import all_sprites
@@ -108,7 +107,7 @@ def add_mob(hero):
     all_sprites.add(mob)
 def add_boss(hero):
     '''
-    Fonction pour ajouter un boss
+    Ajoute un boss à la liste des mobs
     '''
     global mobs
 
@@ -119,6 +118,5 @@ def add_boss(hero):
 
     mobs.append(boss)
     boss.draw(screen)
-
 
 
