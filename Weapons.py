@@ -3,100 +3,187 @@ import math
 
 screen = pygame.display.set_mode((1280, 720))
 
-
 class Weapon:
     '''
-    Classe Weapon : Classe représentant les armes du jeu
+    Cette classe représente une arme dans le jeu.
     '''
     def __init__(self, damage, cooldown):
-        self.damage = damage
-        self.cooldown = cooldown
-        self.last_fire_time = pygame.time.get_ticks()
+        self.__damage = damage
+        self.__cooldown = cooldown
+        self.__last_fire_time = pygame.time.get_ticks()
 
     def can_fire(self):
         '''
-        Méthode pour vérifier si l'arme peut tirer
+        Cette méthode permet de savoir si l'arme peut tirer.
         '''
         current_time = pygame.time.get_ticks()
-        return current_time - self.last_fire_time >= self.cooldown
+        return current_time - self.__last_fire_time >= self.__cooldown
 
     def fire(self, hero, mobs):
-        '''
-        methode pour faire tirer l'arme
-        '''
         pass
 
     def draw(self, screen, x, y , image_path):
         image = pygame.image.load(image_path)
         image = pygame.transform.scale(image, (30, 30))
-        screen.blit(image, (x,y))
+        screen.blit(image, (x, y))
+
+    @property
+    def damage(self):
+        return self.__damage
+
+    @damage.setter
+    def damage(self, value):
+        self.__damage = value
+
+    @property
+    def cooldown(self):
+        return self.__cooldown
+
+    @cooldown.setter
+    def cooldown(self, value):
+        self.__cooldown = value
+
+    @property
+    def last_fire_time(self):
+        return self.__last_fire_time
+
+    @last_fire_time.setter
+    def last_fire_time(self, value):
+        self.__last_fire_time = value
+
 
 class Knife(Weapon):
     '''
-    Classe Knife : Classe représentant le couteau du jeu
+    Cette classe représente un couteau dans le jeu.
     '''
     def __init__(self):
         super().__init__(damage=20, cooldown=1000)
 
+
 class Sword(Weapon):
     '''
-    Classe Sword : Classe représentant l'épée du jeu
+    Cette classe représente une épée dans le jeu.
     '''
     def __init__(self):
         super().__init__(damage=30, cooldown=1500)
 
+
 class Bullet:
     '''
-    Classe Bullet : Classe représentant les balles tirées par le pistolet
+    Cette classe représente une balle dans le jeu.
     '''
     def __init__(self, start_pos, target_pos, damage):
-        self.pos = list(start_pos)
-        self.target = list(target_pos)
-        self.speed = 10
-        self.damage = damage
-        direction = [self.target[0] - self.pos[0], self.target[1] - self.pos[1]]
+        self.__pos = list(start_pos)
+        self.__target = list(target_pos)
+        self.__speed = 10
+        self.__damage = damage
+        direction = [self.__target[0] - self.__pos[0], self.__target[1] - self.__pos[1]]
         length = math.sqrt(direction[0]**2 + direction[1]**2)
-        self.direction = [direction[0]/length, direction[1]/length]
-        self.image = pygame.image.load('assets/Graphics/Projectiles/bullet.png')
-        self.image = pygame.transform.scale(self.image, (30, 30))
+        self.__direction = [direction[0] / length, direction[1] / length]
+        self.__image = pygame.image.load('assets/Graphics/Projectiles/bullet.png')
+        self.__image = pygame.transform.scale(self.__image, (30, 30))
 
     def update(self):
-        self.pos[0] += self.direction[0] * self.speed
-        self.pos[1] += self.direction[1] * self.speed
+        '''
+        Cette méthode permet de mettre à jour la position de la balle.
+        '''
+        self.__pos[0] += self.__direction[0] * self.__speed
+        self.__pos[1] += self.__direction[1] * self.__speed
 
     def intersects(self, mob):
         '''
-        Méthode pour vérifier si la balle est en collision avec un mob
+        Cette méthode permet de savoir si la balle touche un monstre.
         '''
-        return mob.rect.collidepoint(self.pos[0], self.pos[1])
+        return mob.rect.collidepoint(self.__pos[0], self.__pos[1])
 
     def draw(self, screen):
-        screen.blit(self.image, (self.pos[0], self.pos[1]))
+        screen.blit(self.__image, (self.__pos[0], self.__pos[1]))
+
+    @property
+    def pos(self):
+        return self.__pos
+
+    @pos.setter
+    def pos(self, value):
+        self.__pos = value
+
+    @property
+    def target(self):
+        return self.__target
+
+    @target.setter
+    def target(self, value):
+        self.__target = value
+
+    @property
+    def speed(self):
+        return self.__speed
+
+    @speed.setter
+    def speed(self, value):
+        self.__speed = value
+
+    @property
+    def damage(self):
+        return self.__damage
+
+    @damage.setter
+    def damage(self, value):
+        self.__damage = value
+
+    @property
+    def direction(self):
+        return self.__direction
+
+    @direction.setter
+    def direction(self, value):
+        self.__direction = value
+
+    @property
+    def image(self):
+        return self.__image
+
+    @image.setter
+    def image(self, value):
+        self.__image = value
+
 
 class Gun(Weapon):
     '''
-    Classe Gun : Classe représentant le pistolet du jeu
+    Cette classe représente un pistolet dans le jeu.
     '''
     def __init__(self):
         super().__init__(damage=34, cooldown=500)
-        self.bullets = []
+        self.__bullets = []
 
     def fire(self, hero, mobs):
         '''
-        Méthode pour faire tirer le pistolet
+        Cette méthode permet de faire tirer le pistolet.
         '''
         if self.can_fire():
             mouse_pos = pygame.mouse.get_pos()
             bullet = Bullet(hero.rect.center, mouse_pos, self.damage)
-            self.bullets.append(bullet)
+            self.__bullets.append(bullet)
             self.last_fire_time = pygame.time.get_ticks()
 
     def update(self, screen, mobs):
-        for bullet in self.bullets:
+        '''
+        Cette méthode permet de mettre à jour les balles du pistolet.
+        En particulier, elle permet de vérifier si une balle touche un monstre.
+        '''
+        for bullet in self.__bullets:
             bullet.update()
             bullet.draw(screen)
             for mob in mobs:
                 if bullet.intersects(mob):
                     mob.hurt(self.damage, mobs)
-                    self.bullets.remove(bullet)
+                    self.__bullets.remove(bullet)
                     break
+
+    @property
+    def bullets(self):
+        return self.__bullets
+
+    @bullets.setter
+    def bullets(self, value):
+        self.__bullets = value
