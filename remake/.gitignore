@@ -1,0 +1,10 @@
+# Ignore .idea folders
+.idea/
+
+# Ignore Python bytecode files and folders
+__pycache__/
+*.pyc
+
+
+__pycache__
+/venv/

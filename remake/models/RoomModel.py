@@ -1,16 +1,14 @@
-from Material import Material
+from models.enums.Material import Material
 
 class Room():
     """
-        Réprensentation des infos à l'écran
-        col et row = taille du jeu en tiles
+    Une RoomModel est une matrice qui contient des tiles.
+    Son implémentation est indépentante de la MapView.
     """
-    col = 45
-    row = 80
+
     def __init__(self) -> None:
         doorsNumbers = 0
         tile_texture = Material.wall
-    
 
     @staticmethod
     def generate_room(cols, rows):

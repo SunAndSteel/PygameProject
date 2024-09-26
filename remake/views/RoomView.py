@@ -1,4 +1,4 @@
-from RoomModel import Room
+from models.RoomModel import Room
 import pygame
 
 class RoomView():
